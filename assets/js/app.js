@@ -1,7 +1,7 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // ====== CONFIG: Ganti ini ======
-  const BACKEND_URL = 'https://script.google.com/macros/s/PASTE_YOUR_EXEC_URL/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwDiPSXQvPhmauMiBpILimhk_A2QG4fPwPcaXSGj7S5okrSzV502Movj0yWbO9XJ9ei/exec';
   // ===============================
 
   const rupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
