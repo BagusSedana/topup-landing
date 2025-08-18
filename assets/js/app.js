@@ -1,6 +1,12 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
-  const rupiah = (n) => new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR', maximumFractionDigits:0}).format(n||0);
+  // ====== CONFIG: Ganti ini ======
+  const BACKEND_URL = 'https://script.google.com/macros/s/PASTE_YOUR_EXEC_URL/exec';
+  // ===============================
+
+  const rupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
+
+  // DOM
   const gameSel = document.getElementById('game');
   const nominalGrid = document.getElementById('nominalGrid');
   const nominalError = document.getElementById('nominalError');
@@ -14,30 +20,30 @@
   const form = document.getElementById('orderForm');
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // populate game select
-  const fragment = document.createDocumentFragment();
-  GAMES.forEach(code => {
+  // isi select game
+  const frag = document.createDocumentFragment();
+  (window.GAMES || Object.keys(PRICES)).forEach(code => {
     const opt = document.createElement('option');
     opt.value = code;
     opt.textContent = PRICES[code].key;
-    fragment.appendChild(opt);
+    frag.appendChild(opt);
   });
-  gameSel.appendChild(fragment);
+  gameSel.appendChild(frag);
 
   // popular badges
   const popular = document.getElementById('popularBadges');
-  GAMES.forEach(code=>{
-    const span = document.createElement('a');
-    span.href = '#order';
-    span.className = 'badge-ghost text-decoration-none';
-    span.textContent = PRICES[code].key;
-    span.addEventListener('click', (e)=>{
+  (window.GAMES || Object.keys(PRICES)).forEach(code => {
+    const a = document.createElement('a');
+    a.href = '#order';
+    a.className = 'badge-ghost text-decoration-none';
+    a.textContent = PRICES[code].key;
+    a.addEventListener('click', (e) => {
       e.preventDefault();
       gameSel.value = code;
       renderNominals(code);
-      window.scrollTo({top: document.getElementById('order').offsetTop - 80, behavior:'smooth'});
+      window.scrollTo({ top: document.getElementById('order').offsetTop - 80, behavior: 'smooth' });
     });
-    popular.appendChild(span);
+    popular.appendChild(a);
   });
 
   let selectedGame = null;
@@ -54,9 +60,7 @@
     nominalError.classList.add('d-none');
 
     const items = PRICES[code].items;
-    const keys = Object.keys(items);
-
-    keys.forEach((key, idx) => {
+    Object.keys(items).forEach((key) => {
       const col = document.createElement('div');
       col.className = 'col-6 col-md-4';
       const id = `opt_${key}`;
@@ -72,14 +76,14 @@
       nominalGrid.appendChild(col);
     });
 
-    calcTotal();
-    nominalGrid.querySelectorAll('input[name="nominal"]').forEach(inp=>{
+    nominalGrid.querySelectorAll('input[name="nominal"]').forEach(inp => {
       inp.addEventListener('change', () => {
         selectedItemKey = inp.value;
-        selectedPrice = items[selectedItemKey].price;
+        selectedPrice = PRICES[code].items[selectedItemKey].price;
         calcTotal();
       });
     });
+    calcTotal();
   };
 
   const calcTotal = () => {
@@ -100,35 +104,30 @@
 
   fastMode.addEventListener('change', calcTotal);
 
-  // Client-side form validation (Bootstrap)
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    // validity
+  // submit → buka modal
+  form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
     if (!form.checkValidity()) {
-      event.stopPropagation();
+      ev.stopPropagation();
       form.classList.add('was-validated');
       return;
     }
     if (!selectedItemKey) {
       nominalError.classList.remove('d-none');
-      nominalGrid.scrollIntoView({behavior:'smooth', block:'center'});
+      nominalGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     nominalError.classList.add('d-none');
-    // open modal
     payModal.show();
   });
 
-  // send order
+  // kirim ke backend
   btnKirim.addEventListener('click', async () => {
-    if (!buktiInput.files[0]) {
-      alert('Upload bukti transfer dulu ya 🙏');
-      return;
-    }
+    if (!buktiInput.files[0]) { alert('Upload bukti transfer dulu 🙏'); return; }
+
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const buktiBase64 = e.target.result; // data:image/...;base64,xxx
-
+      const buktiBase64 = e.target.result;
       const payload = {
         game: selectedGame,
         game_name: PRICES[selectedGame].key,
@@ -139,36 +138,39 @@
         whatsapp: form.whatsapp.value.trim(),
         note: form.note.value.trim(),
         fast: !!fastMode.checked,
-        timestamp: new Date().toISOString(),
-        // client price sent for display only; server will recompute from a whitelist
-        client_price: selectedPrice,
-        origin: location.origin
+        timestamp: new Date().toISOString()
       };
 
       try {
-        const resp = await fetch('YOUR_APPS_SCRIPT_URL', {
+        // gunakan text/plain biar simple-request (tanpa preflight)
+        const resp = await fetch(BACKEND_URL, {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ ...payload, bukti: buktiBase64 })
         });
-        if (!resp.ok) throw new Error(await resp.text());
-        const data = await resp.json();
+
+        const text = await resp.text();
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${text}`);
+
+        let data;
+        try { data = JSON.parse(text); } catch { throw new Error(`Bad JSON: ${text}`); }
+        if (!data || !data.ok) throw new Error(data && data.error ? data.error : 'Unknown error');
+
         payModal.hide();
         form.reset();
         nominalGrid.innerHTML = '';
         selectedItemKey = null;
         selectedPrice = 0;
-        totalPriceEl.textContent = rupiah(0);
-        alert(`Order berhasil! ID: ${data.order_id}\\nKami akan update via WhatsApp.`);
-        // optional: open chat
+        calcTotal();
+
+        alert(`Order berhasil! ID: ${data.order_id}\nKami update via WhatsApp.`);
         const wa = `https://wa.me/${payload.whatsapp}?text=${encodeURIComponent('Halo! Pesanan kamu kami terima. Order ID: ' + data.order_id)}`;
         window.open(wa, '_blank', 'noopener');
       } catch (err) {
         console.error(err);
-        alert('Gagal kirim pesanan. Coba lagi ya 🙏');
+        alert('Gagal kirim pesanan. Coba lagi ya 🙏\n\n' + err.message);
       }
     };
     reader.readAsDataURL(buktiInput.files[0]);
   });
-
 })();
