@@ -109,42 +109,59 @@ function createOrder_(d){
 function uploadProof_(d){
   if (!d.order_id || !d.bukti) return J({ error:'Missing order_id/bukti' });
 
-  const sh = sheet_(); const found = findRow_(sh, d.order_id); if (!found) return J({ error:'Order not found' });
+  const sh = sheet_(); 
+  const found = findRow_(sh, d.order_id); 
+  if (!found) return J({ error:'Order not found' });
 
   // validasi dataURL & ukuran ≤3MB
   const m = String(d.bukti).match(/^data:(.+);base64,(.+)$/);
   if (!m) return J({ error:'Invalid proof format' });
-  const ct = m[1]; if (!/^image\//.test(ct)) return J({ error:'Only image allowed' });
-  const bytes = Utilities.base64Decode(m[2]); if (bytes.length > 3*1024*1024) return J({ error:'Proof too large (>3MB)' });
+  const ct = m[1]; 
+  if (!/^image\//.test(ct)) return J({ error:'Only image allowed' });
+  const bytes = Utilities.base64Decode(m[2]); 
+  if (bytes.length > 3*1024*1024) return J({ error:'Proof too large (>3MB)' });
 
   const folder = DriveApp.getFolderById(CFG.DRIVE_FOLDER_ID);
   const file = folder.createFile(Utilities.newBlob(bytes, ct, `bukti_${Date.now()}.jpg`));
   try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(_) {}
   const buktiUrl = file.getUrl();
 
+  // update sheet
   sh.getRange(found.row, 11).setValue(buktiUrl);      // K: BuktiURL
   sh.getRange(found.row, 10).setValue('PENDING');     // J: Status
 
+  // ---- Telegram notif (opsional) ----
   if (CFG.TELEGRAM_BOT_TOKEN && CFG.TELEGRAM_CHAT_ID){
-    const v = sh.getRange(found.row,1,1,13).getValues()[0];
-    const orderId=v[1], game=v[2], item=v[3], pid=v[4], sid=v[5], fast=v[8], total=v[9];
+    const v = sh.getRange(found.row, 1, 1, 13).getValues()[0];
+    const orderId = v[1];
+    const game    = v[2];
+    const item    = v[3];
+    const pid     = v[4];
+    const sid     = v[5];
+    const fast    = Boolean(v[7]);        // H = Fast ✅
+    const total   = Number(v[8] || 0);    // I = Total ✅
+
     const text = [
       '🎮 *ORDER BARU*',
       `ID: *${orderId}*`,
       `Game: *${game}*`,
       `Nominal: *${item}*`,
       `Player: *${pid}${sid ? ' ('+sid+')' : ''}*`,
-      `Fast: *${fast ? 'YA':'TIDAK'}*`,
+      `Fast: *${fast ? 'YA' : 'TIDAK'}*`,
       `Total: *${rp(total)}*`,
       `[Bukti](${buktiUrl})`
     ].join('\n');
+
     UrlFetchApp.fetch('https://api.telegram.org/bot'+CFG.TELEGRAM_BOT_TOKEN+'/sendMessage', {
-      method:'post', payload:{ chat_id:CFG.TELEGRAM_CHAT_ID, text, parse_mode:'Markdown' }, muteHttpExceptions:true
+      method:'post',
+      payload:{ chat_id: CFG.TELEGRAM_CHAT_ID, text, parse_mode:'Markdown' },
+      muteHttpExceptions:true
     });
   }
 
   return J({ ok:true });
 }
+
 
 // ---- Admin: update status ----
 function updateStatus_(d){
