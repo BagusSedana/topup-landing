@@ -1,0 +1,15 @@
+
+:root{
+  --radius-xl: 1.25rem;
+}
+*{font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';}
+.bg-gradient{background: radial-gradient(1200px 600px at 80% -10%, #e9f2ff 30%, transparent 60%), linear-gradient(180deg,#fff, #f8fafc);}
+.card{border-radius: var(--radius-xl)!important;}
+.rounded-4{border-radius: var(--radius-xl)!important;}
+.hero-img{max-height: 340px; object-fit: cover;}
+.badge-ghost{background: #f4f6fa; border: 1px dashed #dfe3ea; color:#1f2937; padding:.5rem .75rem; border-radius: 999px;}
+#nominalGrid .form-check{cursor:pointer}
+#nominalGrid .form-check-input{display:none}
+#nominalGrid .option{border:1px solid #e5e7eb; border-radius: .9rem; padding: .8rem; text-align:center; transition: .15s ease; background:#fff}
+#nominalGrid .option:hover{transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,0,0,.05)}
+#nominalGrid .form-check-input:checked + .option{border-color:#0d6efd; box-shadow: 0 0 0 3px rgba(13,110,253,.15);}
