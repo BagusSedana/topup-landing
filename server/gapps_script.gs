@@ -113,68 +113,67 @@ function uploadProof_(d){
   const found = findRow_(sh, d.order_id);
   if (!found) return J({ error:'Order not found' });
 
-  // validasi dataURL & ukuran ≤ 3MB
+  // --- validasi dataURL & ukuran ≤3MB ---
   const m = String(d.bukti).match(/^data:(.+);base64,(.+)$/);
   if (!m) return J({ error:'Invalid proof format' });
   const ct = m[1];
   if (!/^image\//.test(ct)) return J({ error:'Only image allowed' });
   const bytes = Utilities.base64Decode(m[2]);
-  if (bytes.length > 3 * 1024 * 1024) return J({ error:'Proof too large (>3MB)' });
+  if (bytes.length > 3*1024*1024) return J({ error:'Proof too large (>3MB)' });
 
-  // upload ke Drive
+  // --- upload ke Drive ---
   const folder = DriveApp.getFolderById(CFG.DRIVE_FOLDER_ID);
   const file = folder.createFile(Utilities.newBlob(bytes, ct, `bukti_${Date.now()}.jpg`));
-  try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (_) {}
+  try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(_) {}
   const buktiUrl = file.getUrl();
 
-  // update sheet
-  sh.getRange(found.row, 11).setValue(buktiUrl);   // K: BuktiURL
-  sh.getRange(found.row, 10).setValue('PENDING');  // J: Status
+  // --- update sheet ---
+  sh.getRange(found.row, 11).setValue(buktiUrl);  // K: BuktiURL
+  sh.getRange(found.row, 10).setValue('PENDING'); // J: Status
 
-  // === Telegram notif (opsional) ===
+  // --- Telegram notif (opsional) ---
   if (CFG.TELEGRAM_BOT_TOKEN && CFG.TELEGRAM_CHAT_ID) {
     const v = sh.getRange(found.row, 1, 1, 13).getValues()[0];
-    const orderId = v[1];
-    const game    = v[2];
-    const item    = v[3];
-    const pid     = v[4];
-    const sid     = v[5];
-
-    // H = Fast, I = Total  ✅
-    const fastRaw  = v[7];
-    const totalRaw = v[8];
-
-    // normalisasi boolean & angka (kalau kolom I kebetulan format text/“Rp …”)
+    const orderId = v[1];              // B
+    const gameName = v[2];             // C (contoh: "Mobile Legends")
+    const itemLabel = v[3];            // D (contoh: "1412 Diamonds")
+    const pid = v[4];                   // E
+    const sid = v[5];                   // F
+    const fastRaw = v[7];               // H
     const fast = (fastRaw === true) || String(fastRaw).toLowerCase() === 'true' || fastRaw === 1 || String(fastRaw) === '1';
-    let total  = (typeof totalRaw === 'number') ? totalRaw
-                 : Number(String(totalRaw).replace(/[^\d.-]/g, '') || 0);
 
-    // fallback (super aman) hitung ulang dari whitelist kalau angka masih gagal
-    if (!total || isNaN(total)) {
-      const G = CFG.PRICES[d.game] || Object.values(CFG.PRICES).find(p => p.key === game);
-      if (G) {
-        const key = Object.keys(G.items).find(k => G.items[k].label === item);
-        if (key) total = (G.items[key].price || 0) + (fast ? (G.fastFee || 0) : 0);
-      }
+    // === HITUNG ULANG TOTAL DARI WHITELIST (bukan dari sheet) ===
+    const norm = (s) => String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+    const G = Object.values(CFG.PRICES).find(p => norm(p.key) === norm(gameName));
+    let total = 0;
+    if (G) {
+      const key = Object.keys(G.items).find(k => norm(G.items[k].label) === norm(itemLabel));
+      if (key) total = (G.items[key].price || 0) + (fast ? (G.fastFee || 0) : 0);
+    }
+    // fallback super-aman: kalau masih 0 (gak ketemu), coba baca angka dari kolom I (meski teks)
+    if (!total) {
+      const totalRaw = v[8]; // I
+      total = (typeof totalRaw === 'number') ? totalRaw : Number(String(totalRaw||'').replace(/[^\d]/g,''));
+      if (!total || isNaN(total)) total = 0;
     }
 
     const text = [
       '🎮 <b>ORDER BARU</b>',
       `ID: <b>${orderId}</b>`,
-      `Game: <b>${game}</b>`,
-      `Nominal: <b>${item}</b>`,
-      `Player: <b>${pid}${sid ? ' (' + sid + ')' : ''}</b>`,
+      `Game: <b>${gameName}</b>`,
+      `Nominal: <b>${itemLabel}</b>`,
+      `Player: <b>${pid}${sid ? ' ('+sid+')' : ''}</b>`,
       `Fast: <b>${fast ? 'YA' : 'TIDAK'}</b>`,
       `Total: <b>${rp(total)}</b>`,
       `<a href="${buktiUrl}">Bukti</a>`
     ].join('\n');
 
     UrlFetchApp.fetch('https://api.telegram.org/bot' + CFG.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-      method: 'post',
-      payload: {
+      method:'post',
+      payload:{
         chat_id: CFG.TELEGRAM_CHAT_ID,
         text,
-        parse_mode: 'HTML',
+        parse_mode: 'HTML',              // HTML biar link rapi
         disable_web_page_preview: true
       },
       muteHttpExceptions: true
@@ -183,6 +182,7 @@ function uploadProof_(d){
 
   return J({ ok:true });
 }
+
 
 
 
