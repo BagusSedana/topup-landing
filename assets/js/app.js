@@ -1,7 +1,8 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // ====== CONFIG: Ganti ini ======
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwDiPSXQvPhmauMiBpILimhk_A2QG4fPwPcaXSGj7S5okrSzV502Movj0yWbO9XJ9ei/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycby69aPEr8C3VZHOB7GeOL0VeYSe5xxWmbWIkU0Rn0C3xt4bxYkiF-gBJjvrA6J2VPAU/exec';
+  const API_KEY = '0caef89f31d82ec7922b7a33213b7801f653a72e34062ce4bc88d4c95e2f708e';
   // ===============================
 
   const rupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
