@@ -1,7 +1,6 @@
 // assets/js/admin.js
 (() => {
-  // Selalu lewat proxy (aman)
-  const BACKEND_URL = '/api/admin';
+  const BACKEND_URL = '/api/admin'; // selalu lewat proxy
 
   const $ = s => document.querySelector(s);
   const tbody = $('#tbody');
@@ -13,13 +12,6 @@
   const rupiah = (n) => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);
   const fmtTs = (v) => { try { return new Date(v).toLocaleString('id-ID'); } catch { return v; } };
   const badge = (st) => `<span class="status-badge status-${st}">${st}</span>`;
-
-  // Remember ADMIN_KEY lokal (opsional)
-  const saved = localStorage.getItem('ADMIN_KEY'); if (saved) $('#adminKey').value = saved;
-  $('#btnRemember').onclick = () => {
-    const v = $('#adminKey').value.trim(); if (!v) return showToast('Isi ADMIN_KEY dulu');
-    localStorage.setItem('ADMIN_KEY', v); showToast('ADMIN_KEY disimpan di perangkat ini');
-  };
 
   async function postJSON(body) {
     const r = await fetch(BACKEND_URL, {
@@ -34,23 +26,22 @@
   }
 
   async function loadOrders() {
-    const adminKey = $('#adminKey').value.trim();
-    if (!adminKey) return showToast('Masukkan ADMIN_KEY dulu');
-
     const limit  = Number($('#limit').value || 100);
-    const status = $('#filterStatus').value.trim().toUpperCase();
-    const q      = $('#searchQ').value.trim();
+    const status = ($('#filterStatus')?.value || '').trim().toUpperCase();
+    const q      = ($('#searchQ')?.value || '').trim();
 
     tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4"><div class="spinner-border"></div> Loading...</td></tr>`;
     try {
-      const res = await postJSON({ action:'list_orders', admin_key: adminKey, limit, status, q });
+      const res = await postJSON({ action:'list_orders', limit, status, q });
       render(res.items || []);
     } catch (err) {
       const msg = String(err.message || '');
       if (/admin unauthorized/i.test(msg)) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">ADMIN_KEY salah</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">Admin unauthorized. Pastikan ENV <code>ADMIN_KEY</code> di Vercel terpasang & redeploy.</td></tr>`;
       } else if (/origin not allowed/i.test(msg)) {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">Origin tidak diizinkan (cek ALLOWED_ORIGINS di Vercel)</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">Origin tidak diizinkan. Set <code>ALLOWED_ORIGINS</code> di Vercel pakai domain situs ini.</td></tr>`;
+      } else if (/unauthorized/i.test(msg)) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">API unauthorized. Cek ENV <code>API_KEY</code> di Vercel sama dengan Script properties.</td></tr>`;
       } else {
         tbody.innerHTML = `<tr><td colspan="7" class="text-danger">${msg}</td></tr>`;
       }
@@ -117,11 +108,10 @@
     // Update status
     tbody.querySelectorAll('[data-status]').forEach(btn => {
       btn.onclick = async () => {
-        const adminKey = $('#adminKey').value.trim(); if (!adminKey) return showToast('ADMIN_KEY kosong');
         const status = btn.dataset.status; const orderId = btn.dataset.oid;
         const prev = btn.textContent; btn.disabled = true; btn.textContent = '...';
         try {
-          await postJSON({ action:'update_status', admin_key: adminKey, order_id: orderId, status });
+          await postJSON({ action:'update_status', order_id: orderId, status });
           const row = btn.closest('tr'); const badgeEl = row.querySelector('.status-badge');
           badgeEl.textContent = status; badgeEl.className = `status-badge status-${status}`;
           btn.textContent='OK'; setTimeout(()=>btn.textContent=prev,900);
@@ -139,6 +129,6 @@
   $('#searchQ').onkeyup = e => { if (e.key === 'Enter') loadOrders(); };
   document.addEventListener('keydown', e => { if (e.key.toLowerCase()==='r') loadOrders(); });
 
-  // Auto-load jika ADMIN_KEY tersimpan
-  setTimeout(() => { if ($('#adminKey').value.trim()) loadOrders(); }, 300);
+  // Langsung load (karena admin_key disuntik proxy)
+  setTimeout(() => { loadOrders(); }, 200);
 })();
