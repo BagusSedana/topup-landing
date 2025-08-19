@@ -1,0 +1,6 @@
+{
+  "name": "topup-landing",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=18" }
+}

@@ -1,8 +1,7 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // ====== CONFIG (ganti sesuai punyamu) ======
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbym5D7BzPX4PX4vaMr1E419uiBLD83vwQAsYVJ0HCeGwWhERwbF-GdtluXH1zOkBxg/exec';
-  const API_KEY     = '0caef89f31d82ec7922b7a33213b7801f653a72e34062ce4bc88d4c95e2f708e';
+  const PUBLIC_API = '/api/public';
   // ===========================================
 
   const rupiah = (n) =>
