@@ -2,30 +2,25 @@
 (() => {
   // ====== CONFIG ======
   const PUBLIC_API = '/api/public';
-  // ====================
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
       .format(n || 0);
 
   // ====== DOM refs ======
-  const orderSection = document.getElementById('orderSection');     // <-- form wrapper (boleh null)
+  const orderSection = document.getElementById('orderSection');
   const gameSel      = document.getElementById('game');
   const nominalGrid  = document.getElementById('nominalGrid');
   const nominalError = document.getElementById('nominalError');
   const totalPriceEl = document.getElementById('totalPrice');
   const fastMode     = document.getElementById('fastMode');
-  const payModalEl   = document.getElementById('payModal');
-  const payModal     = payModalEl ? new bootstrap.Modal(payModalEl) : null;
   const buktiInput   = document.getElementById('buktiTransfer');
   const btnKirim     = document.getElementById('btnKirim');
-  const modalTotal   = document.getElementById('modalTotal');
   const form         = document.getElementById('orderForm');
   const yearEl       = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   // ====== Dinamis field per game ======
-  // Samakan key-nya dengan PRICES (ML, FF, PUBG, dst)
   const dyn = document.getElementById('dynamicFields');
   const FORM_FIELDS = {
     ML: [
@@ -82,10 +77,9 @@
     });
   }
 
-  // ====== URL/helper ======
+  // ===== URL & Header helper =====
   const getParam = (k) => new URLSearchParams(location.search).get(k);
 
-  // Cari PRICES code dari slug GAMES (berdasarkan nama)
   function slugToPriceCode(slugLower) {
     if (!window.GAMES || !window.PRICES) return null;
     const g = window.GAMES[slugLower];
@@ -111,7 +105,6 @@
     const b  = document.getElementById('gameBanner');
     const bc = document.getElementById('breadcrumbGame');
     if (!window.GAMES) return;
-    // Cari by slug=code.toLowerCase() atau by name dari PRICES
     const bySlug = window.GAMES[code?.toLowerCase()];
     let cfg = bySlug;
     if (!cfg && PRICES[code]) {
@@ -134,25 +127,6 @@
       frag.appendChild(opt);
     });
     gameSel.appendChild(frag);
-  }
-
-  // Badge populer (opsional di sidebar)
-  const popular = document.getElementById('popularBadges');
-  if (popular && gameSel) {
-    Object.keys(PRICES).forEach(code => {
-      const a = document.createElement('a');
-      a.href = '#order';
-      a.className = 'badge-ghost text-decoration-none';
-      a.textContent = PRICES[code].key;
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        gameSel.value = code;
-        gameSel.dispatchEvent(new Event('change', { bubbles:true }));
-        const order = document.getElementById('order');
-        if (order) window.scrollTo({ top: order.offsetTop - 80, behavior: 'smooth' });
-      });
-      popular.appendChild(a);
-    });
   }
 
   let selectedGame = null;
@@ -198,14 +172,11 @@
     let total = selectedPrice || 0;
     if (fastMode?.checked && total > 0) total += currentFastFee || 0;
     if (totalPriceEl) totalPriceEl.textContent = rupiah(total);
-    if (modalTotal)   modalTotal.textContent   = rupiah(total);
   };
 
-  // Tampilkan/hidden form + render fields/nominal saat pilih game
+  // change handler
   if (gameSel) {
-    // awal: sembunyiin form kalau ada wrapper-nya
     if (orderSection) orderSection.classList.add('d-none');
-
     gameSel.addEventListener('change', e => {
       const val = e.target.value;
       if (!val) {
@@ -225,27 +196,21 @@
 
   fastMode?.addEventListener('change', calcTotal);
 
-  // Submit form → buka modal
-  if (form) {
-    form.addEventListener('submit', (ev) => {
-      ev.preventDefault();
-      if (!form.checkValidity()) {
-        ev.stopPropagation();
-        form.classList.add('was-validated');
-        return;
-      }
-      if (!selectedItemKey) {
-        nominalError?.classList.remove('d-none');
-        nominalGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      nominalError?.classList.add('d-none');
-      payModal?.show();
-    });
-  }
+  // Submit -> kirim
+  form?.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    if (!form.checkValidity()) {
+      ev.stopPropagation();
+      form.classList.add('was-validated');
+      return;
+    }
+    if (!selectedItemKey) {
+      nominalError?.classList.remove('d-none');
+      nominalGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    nominalError?.classList.add('d-none');
 
-  // ====== Kirim (2 langkah) ======
-  btnKirim?.addEventListener('click', async () => {
     const f = buktiInput?.files?.[0];
     if (!f) { alert('Upload bukti transfer dulu 🙏'); return; }
     if (!/^image\//.test(f.type)) { alert('File harus gambar ya.'); return; }
@@ -256,10 +221,9 @@
     btnKirim.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
 
     try {
-      // helper ambil nilai aman (kalau field tidak ada, jadi '')
       const v = (n) => (form?.[n]?.value || '').trim();
 
-      // STEP 1 — create_order (tanpa bukti) → respon instan
+      // STEP 1: create order
       const basePayload = {
         action: 'create_order',
         origin: location.origin,
@@ -276,18 +240,18 @@
       const d1 = await postJSON(PUBLIC_API, basePayload);
       if (!d1.ok) throw new Error(d1.error || 'Create order failed');
 
-      // Popup sukses CEPAT
-      payModal?.hide();
       alert(`Order diterima! ID: ${d1.order_id}\nBukti sedang diunggah...`);
-      const wa = `https://wa.me/${basePayload.whatsapp}?text=${encodeURIComponent('Halo! Pesanan kamu kami terima. Order ID: ' + d1.order_id)}`;
-      window.open(wa, '_blank', 'noopener');
+      if (basePayload.whatsapp) {
+        const wa = `https://wa.me/${basePayload.whatsapp}?text=${encodeURIComponent('Halo! Pesanan kamu kami terima. Order ID: ' + d1.order_id)}`;
+        window.open(wa, '_blank', 'noopener');
+      }
 
-      // STEP 2 — kompres & upload bukti (background)
+      // STEP 2: upload bukti (background)
       const buktiBase64 = await compressImageToDataURL(f, { maxW: 1200, maxH: 1200, quality: 0.75 });
       await postJSON(PUBLIC_API, { action: 'upload_proof', order_id: d1.order_id, bukti: buktiBase64 });
 
-      // Reset form
-      form?.reset();
+      // reset
+      form.reset();
       nominalGrid.innerHTML = '';
       selectedItemKey = null; selectedPrice = 0; calcTotal();
 
@@ -310,7 +274,7 @@
       gameSel.value = initCode;
       gameSel.dispatchEvent(new Event('change', { bubbles:true }));
     } else {
-      // Tidak ada <select> (product page only) → render manual
+      // tanpa <select>
       renderNominals(initCode);
       renderFields(initCode);
       syncProductHeader(initCode);
