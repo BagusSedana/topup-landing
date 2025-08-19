@@ -1,5 +1,5 @@
-// /api/admin.js (Vercel Serverless Function)
-// Env required: BACKEND_URL, API_KEY
+// /api/admin.js
+// Env required: BACKEND_URL (Apps Script /exec), API_KEY, ADMIN_KEY
 // Optional: ALLOWED_ORIGINS = "https://yourdomain.vercel.app,https://custom.dom"
 
 export default async function handler(req, res) {
@@ -9,18 +9,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { BACKEND_URL, API_KEY, ALLOWED_ORIGINS = '' } = process.env;
-    if (!BACKEND_URL || !API_KEY) return res.status(500).json({ error: 'Missing env' });
+    const { BACKEND_URL, API_KEY, ADMIN_KEY, ALLOWED_ORIGINS = '' } = process.env;
+    if (!BACKEND_URL || !API_KEY || !ADMIN_KEY) {
+      return res.status(500).json({ error: 'Missing env (BACKEND_URL/API_KEY/ADMIN_KEY)' });
+    }
 
-    // Origin filter (optional)
+    // Origin allowlist (opsional)
     const allowed = ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean);
     const origin = req.headers.origin || '';
     if (allowed.length && !allowed.includes(origin)) {
       return res.status(403).json({ error: 'Origin not allowed' });
     }
 
+    // Body dari client (boleh ada/ga ada admin_key)
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-    const payload = { ...body, api_key: API_KEY };
+    // Suntik kunci di server (client gak bisa override)
+    const payload = { ...body, api_key: API_KEY, admin_key: ADMIN_KEY };
 
     const r = await fetch(BACKEND_URL, {
       method: 'POST',
