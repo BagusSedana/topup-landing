@@ -1,25 +1,22 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TopUp — Detail</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TopUpGim — Detail Produk</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
     body{ background:#f5f7fb; }
     .card-pane{ border-radius:14px; overflow:hidden; border:1px solid #eef0f4; }
     .headbar{ font-weight:600; background:#2f3a4a; color:#fff; padding:.8rem 1rem; }
-    .btn-checker{ border:1px dashed #cbd5e1; }
     .banner{ border-radius:14px; overflow:hidden; }
   </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <i class="bi bi-lightning-charge-fill text-primary"></i> TopUpKu
-      </a>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html"><i class="bi bi-lightning-charge-fill text-primary"></i> TopUpGim</a>
       <div class="ms-auto small text-secondary">
         <i class="bi bi-currency-dollar me-1"></i>Daftar Harga
         <span class="mx-2">•</span>
@@ -32,56 +29,71 @@
 
   <main class="container my-4">
     <nav class="small text-secondary mb-3">
-      <a href="index.html" class="text-decoration-none">Home</a>
-      <span class="mx-1">/</span>
+      <a href="index.html" class="text-decoration-none">Home</a> <span class="mx-1">/</span>
       <span id="breadcrumbGame">Game</span>
     </nav>
 
     <div class="row g-4">
       <div class="col-lg-7">
-        <img id="gameBanner" class="w-100 banner" src="" alt="Banner">
+        <img id="gameBanner" class="w-100 banner" src="" alt="Banner" />
         <h3 class="mt-3" id="gameTitle">Top Up Game</h3>
 
-        <!-- Selling points -->
         <div class="list-group list-group-flush my-3">
-          <div class="list-group-item ps-0">
-            <i class="bi bi-bolt me-2 text-primary"></i><b>Proses Instan.</b> Kirim cepat hitungan detik.
-          </div>
-          <div class="list-group-item ps-0">
-            <i class="bi bi-shield-check me-2 text-success"></i><b>Resmi & Aman.</b> Pembayaran lokal.
-          </div>
-          <div class="list-group-item ps-0">
-            <i class="bi bi-tags me-2 text-warning"></i><b>Harga Hemat.</b> Banyak diskon + tanpa biaya admin.
-          </div>
+          <div class="list-group-item ps-0"><i class="bi bi-bolt me-2 text-primary"></i><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
+          <div class="list-group-item ps-0"><i class="bi bi-shield-check me-2 text-success"></i><b>Resmi & Aman.</b> Pembayaran lokal.</div>
+          <div class="list-group-item ps-0"><i class="bi bi-tags me-2 text-warning"></i><b>Harga Hemat.</b> Banyak diskon + tanpa biaya admin.</div>
         </div>
       </div>
 
       <div class="col-lg-5">
-        <!-- Masukkan Informasi Akun -->
         <div class="card card-pane mb-4">
           <div class="headbar">Masukkan Informasi Akun</div>
           <div class="card-body">
-            <div id="accountFields"></div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary btn-checker flex-fill" onclick="dummyCheck()">
-                <i class="bi bi-search me-1"></i>Periksa
-              </button>
-              <a class="btn btn-outline-dark flex-fill" target="_blank" href="https://www.google.com/search?q=cara+cek+user+id+game">
-                <i class="bi bi-journal-text me-1"></i>Tutorial
-              </a>
+            <div id="orderSection">
+              <div class="row g-3" id="dynamicFields"></div>
+              <div class="row g-3 mt-0">
+                <div class="col-md-6">
+                  <label class="form-label">WhatsApp</label>
+                  <input class="form-control rounded-4" name="whatsapp" placeholder="08xxxxxxxxxx" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Catatan</label>
+                  <input class="form-control rounded-4" name="note" placeholder="Opsional" />
+                </div>
+              </div>
+              <div class="d-flex gap-2 mt-3">
+                <button class="btn btn-outline-secondary flex-fill" id="btnPeriksa"><i class="bi bi-search me-1"></i>Periksa</button>
+                <a class="btn btn-outline-dark flex-fill" target="_blank" href="https://www.google.com/search?q=cara+cek+user+id+game"><i class="bi bi-journal-text me-1"></i>Tutorial</a>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Pilih Nominal -->
         <div class="card card-pane">
           <div class="headbar">Pilih Nominal</div>
           <div class="card-body">
-            <div class="alert alert-primary py-2 small" role="alert">
-              Harga tertera sudah termasuk biaya admin & biaya tambahan lain.
-            </div>
-            <div id="nominalTabs" class="mb-3"></div>
+            <div class="alert alert-primary py-2 small">Harga tertera sudah termasuk biaya admin & biaya tambahan lain.</div>
+            <div class="mb-3" id="nominalTabs"></div>
             <div id="nominalGrid" class="row g-3"></div>
+            <div class="text-danger small mt-2 d-none" id="nominalError">Pilih salah satu nominal dulu ya.</div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="fastMode" />
+                  <label class="form-check-label" for="fastMode">Fast Mode</label>
+                </div>
+              </div>
+              <div class="fw-semibold">Total: <span id="totalPrice">Rp0</span></div>
+            </div>
+
+            <form id="orderForm" class="mt-3">
+              <div class="mb-2">
+                <label class="form-label">Bukti Transfer (jpg/png, maks 10MB)</label>
+                <input type="file" id="buktiTransfer" accept="image/*" class="form-control" />
+              </div>
+              <button class="btn btn-success w-100" id="btnKirim" type="submit"><i class="bi bi-lightning-charge me-1"></i>Buat Pesanan</button>
+            </form>
           </div>
         </div>
       </div>
@@ -89,20 +101,18 @@
   </main>
 
   <footer class="border-top bg-white mt-4">
-    <div class="container py-4 text-secondary small">
-      © <span id="y"></span> TopUpKu — cepat, murah, instan.
-    </div>
+    <div class="container py-4 text-secondary small">© <span id="year"></span> TopUpGim — cepat, murah, instan.</div>
   </footer>
 
-  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- App Config & Logic -->
-  <!-- Sama seperti di index: bisa inline atau pakai src external -->
-  <!-- START APP.JS -->
-  <!-- paste isi app.js di sini ATAU pakai <script src="/assets/app.js"></script> -->
-  <!-- END APP.JS -->
-
-  <script>renderProductPage();</script>
+  <!-- LOGIC ORDER -->
+  <script src="assets/app.js?v=4"></script>
+  <script>
+    // tombol Periksa → validasi ringan (hook ke API cek akun kalau ada)
+    document.getElementById('btnPeriksa')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Data akun terlihat valid. (Integrasi API cek akun bisa ditaruh di sini.)');
+    });
+  </script>
 </body>
 </html>
