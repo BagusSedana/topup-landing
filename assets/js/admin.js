@@ -1,6 +1,6 @@
 // assets/js/admin.js
 (() => {
-  // endpoint selalu ke serverless function
+  // Selalu lewat proxy (aman)
   const BACKEND_URL = '/api/admin';
 
   const $ = s => document.querySelector(s);
@@ -14,11 +14,11 @@
   const fmtTs = (v) => { try { return new Date(v).toLocaleString('id-ID'); } catch { return v; } };
   const badge = (st) => `<span class="status-badge status-${st}">${st}</span>`;
 
-  // simpan ADMIN_KEY lokal (opsional)
+  // Remember ADMIN_KEY lokal (opsional)
   const saved = localStorage.getItem('ADMIN_KEY'); if (saved) $('#adminKey').value = saved;
   $('#btnRemember').onclick = () => {
     const v = $('#adminKey').value.trim(); if (!v) return showToast('Isi ADMIN_KEY dulu');
-    localStorage.setItem('ADMIN_KEY', v); showToast('ADMIN_KEY disimpan lokal');
+    localStorage.setItem('ADMIN_KEY', v); showToast('ADMIN_KEY disimpan di perangkat ini');
   };
 
   async function postJSON(body) {
@@ -46,7 +46,14 @@
       const res = await postJSON({ action:'list_orders', admin_key: adminKey, limit, status, q });
       render(res.items || []);
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="7" class="text-danger">${err.message}</td></tr>`;
+      const msg = String(err.message || '');
+      if (/admin unauthorized/i.test(msg)) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">ADMIN_KEY salah</td></tr>`;
+      } else if (/origin not allowed/i.test(msg)) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">Origin tidak diizinkan (cek ALLOWED_ORIGINS di Vercel)</td></tr>`;
+      } else {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-danger">${msg}</td></tr>`;
+      }
     }
   }
 
@@ -120,7 +127,7 @@
           btn.textContent='OK'; setTimeout(()=>btn.textContent=prev,900);
           showToast(`Status ${orderId} → ${status}`);
         } catch (err) {
-          btn.textContent = prev; showToast('Gagal update: ' + err.message);
+          btn.textContent = prev; showToast('Gagal update: ' + (err.message || err));
         } finally { btn.disabled = false; }
       };
     });
@@ -128,9 +135,10 @@
 
   // Events
   $('#btnRefresh').onclick = loadOrders;
+  $('#btnClear').onclick = () => { $('#searchQ').value=''; $('#filterStatus').value=''; loadOrders(); };
   $('#searchQ').onkeyup = e => { if (e.key === 'Enter') loadOrders(); };
   document.addEventListener('keydown', e => { if (e.key.toLowerCase()==='r') loadOrders(); });
 
-  // auto-load kalau ADMIN_KEY tersimpan
+  // Auto-load jika ADMIN_KEY tersimpan
   setTimeout(() => { if ($('#adminKey').value.trim()) loadOrders(); }, 300);
 })();
