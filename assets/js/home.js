@@ -1,11 +1,28 @@
 /* global GAMES */
 (() => {
-  // ---- READY SHIM: jalanin init walau script diletak di <head> atau tanpa defer
-  const ready = (fn) => (document.readyState !== 'loading')
-    ? fn()
-    : document.addEventListener('DOMContentLoaded', fn);
+  // ===== ready shim (jalan walau script di <head> & tanpa defer)
+  const ready = (fn) =>
+    (document.readyState !== 'loading')
+      ? fn()
+      : document.addEventListener('DOMContentLoaded', fn);
 
-  // ---- Data dummy (non-game)
+  // ===== util
+  const $, $$ = (s, r = document) => r.querySelector(s);
+  function ensureMount(id, cls = '') {
+    let el = document.getElementById(id);
+    if (el) return el;
+    // taruh di <main> kalau ada, kalau nggak di .container, kalau nggak ya body
+    const host = $('main') || $('.container') || document.body;
+    el = document.createElement('div');
+    el.id = id;
+    if (cls) el.className = cls;
+    host.appendChild(el);
+    console.warn(`[home] #${id} belum ada → dibuat otomatis di ${host.tagName.toLowerCase()}`);
+    return el;
+  }
+  const badge = (t, cls='badge-soft') => `<span class="badge rounded-pill ${cls}">${t}</span>`;
+
+  // ===== dummy data (non-game) – silakan ganti
   const TRENDING = [
     { name:'DANA', img:'https://i.imgur.com/6wABv0k.png' },
     { name:'ZEPETO', img:'https://i.imgur.com/fC1m5w1.png' },
@@ -67,12 +84,9 @@
     { slug:'pubgm', name:'PUBGM Global',   cover:'https://i.imgur.com/rgYt9FQ.png', sold:'Terjual 10rb+', dis:'-10%', instan:true }
   ];
 
-  const badge = (t, cls='badge-soft') => `<span class="badge rounded-pill ${cls}">${t}</span>`;
-
+  // ===== renderers
   function renderPopular(){
-    const wrap = document.getElementById('popularGrid');
-    if (!wrap) { console.warn('[home] #popularGrid tidak ditemukan'); return; }
-
+    const wrap = ensureMount('popularGrid', 'row g-3');
     const data = (window.GAMES
       ? Object.values(GAMES).map(g => ({
           slug:g.slug, name:g.name,
@@ -102,9 +116,8 @@
     `).join('');
   }
 
-  function renderMiniGrid(arr, targetId){
-    const el = document.getElementById(targetId);
-    if (!el) { console.warn('[home] #' + targetId + ' tidak ditemukan'); return; }
+  function renderMiniGrid(arr, id){
+    const el = ensureMount(id, 'row g-3');
     el.innerHTML = arr.map(x => `
       <div class="col-6 col-md-3 col-lg-2">
         <a href="#" class="text-decoration-none">
@@ -118,9 +131,8 @@
     `).join('');
   }
 
-  function renderChips(arr, targetId){
-    const el = document.getElementById(targetId);
-    if (!el) { console.warn('[home] #' + targetId + ' tidak ditemukan'); return; }
+  function renderChips(arr, id){
+    const el = ensureMount(id, 'h-scroll pb-1');
     el.innerHTML = arr.map(x => `
       <a href="#" class="chip text-decoration-none">
         <img src="${x.img}" alt="${x.name}" style="width:24px;height:24px;object-fit:contain">
@@ -130,16 +142,17 @@
   }
 
   function init(){
-    const y = document.getElementById('y');
-    if (y) y.textContent = new Date().getFullYear();
+    // tahun footer (opsional)
+    const y = $('#y'); if (y) y.textContent = new Date().getFullYear();
 
-    renderPopular();
-    renderMiniGrid(TRENDING, 'trendingGrid');
-    renderMiniGrid(DAILY, 'dailyGrid');
-    renderChips(WALLETS, 'walletChips');
-    renderMiniGrid(PULSA, 'pulsaGrid');
-    renderMiniGrid(GAMECAT, 'gameGrid');
-    renderMiniGrid(APPS, 'appGrid');
+    // render
+    try { renderPopular(); } catch (e) { console.error('[home] popular error', e); }
+    try { renderMiniGrid(TRENDING, 'trendingGrid'); } catch (e) { console.error('[home] trending error', e); }
+    try { renderMiniGrid(DAILY, 'dailyGrid'); } catch (e) { console.error('[home] harian error', e); }
+    try { renderChips(WALLETS, 'walletChips'); } catch (e) { console.error('[home] wallet error', e); }
+    try { renderMiniGrid(PULSA, 'pulsaGrid'); } catch (e) { console.error('[home] pulsa error', e); }
+    try { renderMiniGrid(GAMECAT, 'gameGrid'); } catch (e) { console.error('[home] game cat error', e); }
+    try { renderMiniGrid(APPS, 'appGrid'); } catch (e) { console.error('[home] app error', e); }
 
     console.info('[home] loaded ✓');
   }
