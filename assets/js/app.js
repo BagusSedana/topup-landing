@@ -1,8 +1,8 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
-  // ====== CONFIG (ganti sesuai punyamu) ======
+  // ====== CONFIG ======
   const PUBLIC_API = '/api/public';
-  // ===========================================
+  // ====================
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -26,17 +26,17 @@
   async function postJSON(url, obj) {
     const resp = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request (anti-CORS ribet)
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request (anti preflight)
       body: JSON.stringify(obj)
     });
     const text = await resp.text();
     let data; try { data = JSON.parse(text); } catch { throw new Error(text || 'Bad JSON'); }
-    if (!resp.ok)                 throw new Error(data.error || text || `HTTP ${resp.status}`);
-    if (data && data.error)       throw new Error(data.error);
+    if (!resp.ok)           throw new Error(data.error || text || `HTTP ${resp.status}`);
+    if (data && data.error) throw new Error(data.error);
     return data;
   }
 
-  // Kompres gambar -> dataURL (jpeg) biar upload cepat
+  // Kompres gambar -> dataURL (jpeg)
   async function compressImageToDataURL(file, {maxW=1200, maxH=1200, quality=0.75} = {}) {
     const bmp = await createImageBitmap(file);
     const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
@@ -168,7 +168,6 @@
     try {
       // STEP 1 — create_order (tanpa bukti) → respon instan
       const basePayload = {
-        api_key: API_KEY,
         action: 'create_order',
         origin: location.origin,
         game: selectedGame,
@@ -181,7 +180,7 @@
         timestamp: new Date().toISOString()
       };
 
-      const d1 = await postJSON(BACKEND_URL, basePayload);
+      const d1 = await postJSON(PUBLIC_API, basePayload);
       if (!d1.ok) throw new Error(d1.error || 'Create order failed');
 
       // Popup sukses CEPAT
@@ -192,8 +191,7 @@
 
       // STEP 2 — kompres & upload bukti (background)
       const buktiBase64 = await compressImageToDataURL(f, { maxW: 1200, maxH: 1200, quality: 0.75 });
-      await postJSON(BACKEND_URL, {
-        api_key: API_KEY,
+      await postJSON(PUBLIC_API, {
         action: 'upload_proof',
         order_id: d1.order_id,
         bukti: buktiBase64
