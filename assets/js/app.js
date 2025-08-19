@@ -1,7 +1,7 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // ====== CONFIG (ganti sesuai punyamu) ======
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzCgmf5AXxOnNuacKJuoJdekQALMsk-a3Dxk2jR7ZLXSfuHrbNh1-y0vMwfi87m-pkN/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwcJXOaBdKvtXFeLehWv6M316I0rQ9NdJkS9eUQvm--G0yV24vdNWFEaGAJxrcFqGGo/exec';
   const API_KEY     = '0caef89f31d82ec7922b7a33213b7801f653a72e34062ce4bc88d4c95e2f708e';
   // ===========================================
 
