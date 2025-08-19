@@ -104,9 +104,15 @@
     <div class="container py-4 text-secondary small">© <span id="year"></span> TopUpGim — cepat, murah, instan.</div>
   </footer>
 
+  <!-- letakkan sebelum </body> -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- LOGIC ORDER -->
-  <script src="assets/app.js?v=4"></script>
+  
+  <!-- 1) Data harus duluan -->
+  <script src="assets/js/data.js?v=1"></script>
+  
+  <!-- 2) Baru logic order -->
+  <script src="assets/js/app.js?v=5"></script>
+
   <script>
     // tombol Periksa → validasi ringan (hook ke API cek akun kalau ada)
     document.getElementById('btnPeriksa')?.addEventListener('click', (e) => {
