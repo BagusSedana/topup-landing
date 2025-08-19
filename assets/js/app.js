@@ -2,19 +2,11 @@
 (() => {
   // =========================================================
   //  TopUpGim - Product Page Logic (full, uncut)
-  //  - Auto load PRICES/GAMES (waitFor)
-  //  - Form field dinamis per game
-  //  - Render nominal & total (with Fast Mode)
-  //  - Create order → show QR modal
-  //  - Optional: upload bukti (manual)
-  //  - Robust mapping for different backend fields
   // =========================================================
 
   // -------------------- CONFIG & UTILS ---------------------
   const PUBLIC_API = '/api/public';
-  // Kalau kamu call langsung Apps Script (tanpa proxy), isi window.API_KEY di HTML:
-  // <script>window.API_KEY="...";</script>
-  const API_KEY = window.API_KEY || null;
+  const API_KEY = window.API_KEY || null; // set di HTML kalau langsung tembak Apps Script
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -22,7 +14,6 @@
 
   const qs  = (s, r=document) => r.querySelector(s);
   const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
-
   const getParam = (k) => new URLSearchParams(location.search).get(k);
 
   // normalisasi WA 08xxxxxxxx → 62xxxxxxxx
@@ -31,7 +22,6 @@
     return /^0\d{8,15}$/.test(wa) ? ('62' + wa.slice(1)) : wa;
   };
 
-  // wait helper → nunggu PRICES siap kalau data.js load belakangan
   function waitFor(cond, cb, { timeout = 4000, every = 40 } = {}) {
     const t0 = Date.now();
     (function loop(){
@@ -43,7 +33,7 @@
 
   // --------------------- DOM REFERENCES --------------------
   const orderSection = qs('#orderSection');
-  const form         = qs('#orderForm');           // <<< penting: form utama
+  const form         = qs('#orderForm');
   const gameSel      = qs('#game');
   const nominalGrid  = qs('#nominalGrid');
   const nominalError = qs('#nominalError');
@@ -53,17 +43,13 @@
   const yearEl       = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // container dinamis untuk field akun → PASTIKAN masuk ke dalam <form>
+  // ⛔ JANGAN pindahkan dynamic fields ke <form> (biar tetap di kartu "Masukkan Informasi Akun")
   let dyn = qs('#dynamicFields');
-  if (!dyn) {
+  if (!dyn && orderSection) {
     dyn = document.createElement('div');
     dyn.id = 'dynamicFields';
     dyn.className = 'row g-3';
-    if (form) form.insertBefore(dyn, form.firstChild);   // <<< dimasukkan ke DALAM form
-    else if (orderSection) orderSection.prepend(dyn);
-  } else {
-    // kalau sudah ada tapi di luar form, pindahkan ke dalam form
-    if (form && !form.contains(dyn)) form.insertBefore(dyn, form.firstChild);
+    orderSection.prepend(dyn);
   }
 
   // ----------------------- QR MODAL ------------------------
@@ -117,6 +103,7 @@
   };
 
   function renderFields(code){
+    if (!dyn) return;
     const schema = FORM_FIELDS[code] || FORM_FIELDS.DEFAULT;
     dyn.innerHTML = schema.map(f => `
       <div class="col-md-6">
@@ -130,20 +117,19 @@
     `).join('');
   }
 
-  // WA diwajibkan (kebanyakan backend minta ini)
-  const waInput = form?.['whatsapp'];
+  // WA ada di kartu 1 (bukan di <form>)
+  const waInput = document.querySelector('input[name="whatsapp"]');
   if (waInput) {
     waInput.required = true;
-    waInput.pattern = '^0\\d{8,14}$'; // 08xxxxxxxx (9–15 digit)
+    waInput.pattern = '^0\\d{8,14}$';
     waInput.addEventListener('input', () => {
       waInput.setCustomValidity(waInput.validity.patternMismatch ? 'Format WA tidak valid (contoh 08xxxxxxxxxx)' : '');
     });
   }
 
   // ------------------------ HTTP --------------------------
-  // dual-mode post: text/plain → fallback application/json
   async function postJSONAny(url, obj) {
-    // try 1: text/plain (anti preflight)
+    // try 1: text/plain
     let resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -168,7 +154,7 @@
     return data;
   }
 
-  // kompres gambar → dataURL (jpeg)
+  // kompres gambar
   async function compressImageToDataURL(file, {maxW=1200, maxH=1200, quality=0.75} = {}) {
     const bmp = await createImageBitmap(file);
     const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
@@ -208,15 +194,15 @@
     const low = String(inputRaw).toLowerCase();
     const norm = sanitize(inputRaw);
 
-    if (PRICES[up]) return up;                           // ML
-    for (const code of Object.keys(PRICES)) {            // slug
+    if (PRICES[up]) return up;
+    for (const code of Object.keys(PRICES)) {
       const slug = PRICES[code]?.slug;
       if (slug && String(slug).toLowerCase() === low) return code;
     }
-    for (const code of Object.keys(PRICES)) {            // nama
+    for (const code of Object.keys(PRICES)) {
       if (sanitize(PRICES[code]?.key) === norm) return code;
     }
-    if (window.GAMES) {                                  // dari GAMES
+    if (window.GAMES) {
       const g = GAMES[low];
       if (g) {
         const gname = sanitize(g.name);
@@ -288,7 +274,6 @@
       });
     });
 
-    // auto pilih opsi pertama (biar total nggak 0 melulu)
     const first = nominalGrid.querySelector('input[name="nominal"]');
     if (first) { first.checked = true; first.dispatchEvent(new Event('change')); }
     else calcTotal();
@@ -325,11 +310,9 @@
     // SUBMIT: create order → show QR
     form?.addEventListener('submit', async (ev) => {
       ev.preventDefault();
-      if (!form.checkValidity()) { ev.stopPropagation(); form.classList.add('was-validated'); return; }
       if (!selectedItemKey) { nominalError?.classList.remove('d-none'); nominalGrid.scrollIntoView({behavior:'smooth', block:'center'}); return; }
       nominalError?.classList.add('d-none');
 
-      // ambil value; fallback cari di dokumen kalau input tidak berada di dalam form
       const readVal = (n) => {
         const el = (form && form[n]) || document.querySelector(`[name="${n}"]`);
         return (el?.value || '').trim();
@@ -341,7 +324,6 @@
 
       const payload = {
         action: 'create_order',
-        // produk
         game: selectedGame || findPriceCode(getParam('game')) || Object.keys(PRICES)[0],
         game_name: conf.key,
         item_key: selectedItemKey,
@@ -352,11 +334,11 @@
         fast_fee: conf.fastFee || 0,
         total,
 
-        // akun
+        // akun (ambil dari kartu 1)
         player_id: readVal('player_id'),
         server_id: readVal('server_id') || undefined,
 
-        // customer (normalisasi WA ke 62)
+        // customer
         whatsapp: to62(readVal('whatsapp')),
         customer_phone: to62(readVal('whatsapp')),
         note: readVal('note') || undefined,
@@ -368,10 +350,8 @@
         timestamp: new Date().toISOString()
       };
 
-      // inject API key kalau ada (untuk Apps Script yang require api_key)
       if (API_KEY) payload.api_key = API_KEY;
 
-      // loading state (tombol submit)
       const btn = ev.submitter || qs('#btnKirim');
       const prev = btn ? btn.innerHTML : null;
       if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Membuat pesanan…'; }
@@ -411,7 +391,6 @@
 
       } catch (err) {
         console.error(err);
-        // tampilkan pesan error dekat form
         let box = qs('#orderErrorMsg');
         if (!box) {
           box = document.createElement('div');
@@ -440,7 +419,7 @@
       if (lastPayInfo?.deeplink) window.open(lastPayInfo.deeplink, '_blank', 'noopener');
     });
 
-    // upload bukti (opsional) via modal
+    // upload bukti (opsional)
     btnUpload?.addEventListener('click', async () => {
       try{
         const f = buktiInput?.files?.[0];
@@ -451,7 +430,7 @@
 
         const buktiBase64 = await compressImageToDataURL(f, {maxW:1200,maxH:1200,quality:0.75});
         const body = { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 };
-        if (API_KEY) body.api_key = API_KEY; // ikutkan api_key kalau diperlukan backend
+        if (API_KEY) body.api_key = API_KEY;
         const d2 = await postJSONAny(PUBLIC_API, body);
         if (d2.ok) { alert('Bukti diterima. Terima kasih!'); payModal.hide(); }
         else { throw new Error(d2.error || 'Upload gagal'); }
@@ -464,7 +443,7 @@
 
   // ------------------------ BOOT ---------------------------
   function boot(){
-    // isi <select> game kalau ada
+    // kalau ada <select id="game"> isi otomatis
     if (gameSel && window.PRICES) {
       const frag = document.createDocumentFragment();
       Object.keys(PRICES).forEach(code => {
@@ -498,6 +477,5 @@
     }
   }
 
-  // start setelah PRICES siap
   waitFor(() => typeof window.PRICES !== 'undefined', boot);
 })();
