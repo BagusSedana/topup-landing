@@ -154,3 +154,160 @@
             </div>
           </div>
         </div>
+
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+              <h2 class="h5 fw-bold">Kenapa lewat kami?</h2>
+              <ul class="list-unstyled mt-3 small">
+                <li class="mb-2">✅ Harga agent — kamu dapet margin</li>
+                <li class="mb-2">✅ Resi & status lewat WhatsApp</li>
+                <li class="mb-2">✅ Data aman, kami cuma butuh Player ID</li>
+              </ul>
+              <hr>
+              <h3 class="h6 text-uppercase text-muted">Cara Order</h3>
+              <ol class="small mt-2">
+                <li>Pilih game dan nominal</li>
+                <li>Isi Player ID & WhatsApp</li>
+                <li>Bayar via QRIS</li>
+                <li>Kami proses di TopUpGim (akun agent)</li>
+              </ol>
+            </div>
+          </div>
+
+          <section class="mt-4" id="produk">
+            <div class="card border-0 shadow-sm rounded-4">
+              <div class="card-body p-4">
+                <h2 class="h6 fw-bold">Produk Populer</h2>
+                <div class="d-flex flex-wrap gap-2 mt-2" id="popularBadges"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Pembayaran -->
+  <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4">
+        <div class="modal-header">
+          <h5 class="modal-title">Pembayaran QRIS</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center">
+            <img src="assets/img/qris.jpg" class="img-fluid rounded-3 border p-2" alt="QRIS">
+            <p class="mt-3 mb-1">Total yang harus dibayar:</p>
+            <div class="display-6 fw-semibold" id="modalTotal">Rp0</div>
+            <p class="small text-muted mt-2">Setelah bayar, upload bukti transfer di bawah.</p>
+          </div>
+          <div class="mt-3">
+            <input class="form-control" type="file" id="buktiTransfer" accept="image/*">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary rounded-4" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-primary rounded-4" id="btnKirim">Kirim Pesanan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="py-5 bg-light" id="faq">
+    <div class="container">
+      <h2 class="h4 fw-bold mb-3">FAQ</h2>
+      <div class="accordion" id="faqAcc">
+        <div class="accordion-item rounded-4 overflow-hidden border-0 shadow-sm mb-3">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+              Berapa lama prosesnya?
+            </button>
+          </h2>
+          <div id="faq1" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+              Rata-rata 1–10 menit setelah pembayaran terkonfirmasi. Jam sibuk bisa sedikit lebih lama.
+            </div>
+          </div>
+        </div>
+        <div class="accordion-item rounded-4 overflow-hidden border-0 shadow-sm mb-3">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+              Apakah aman?
+            </button>
+          </h2>
+          <div id="faq2" class="accordion-collapse collapse">
+            <div class="accordion-body">Aman. Kami hanya butuh Player ID & Server (jika ada). Tidak ada password.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-4 border-top">
+    <div class="container small text-muted d-flex flex-wrap gap-2 justify-content-between">
+      <div>© <span id="year"></span> NamaTokoKamu</div>
+      <div>Made with ❤️ • <a href="#" class="link-underline-opacity-0">Kebijakan</a></div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>document.getElementById('year').textContent=new Date().getFullYear()</script>
+
+  <!-- DATA & LOGIKA -->
+  <script src="assets/js/prices.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/catalog.js"></script>
+
+  <!-- Tampilkan form + field DINAMIS setelah pilih game -->
+  <script>
+  /* global PRICES */
+  (() => {
+    const orderSection = document.getElementById('orderSection');
+    const gameSel      = document.getElementById('game');
+    const dyn          = document.getElementById('dynamicFields');
+
+    // schema field per game (samain key-nya dengan PRICES)
+    const FORM_FIELDS = {
+      ML: [
+        { name:'player_id', label:'Player ID', placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
+        { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }
+      ],
+      FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,}'}],
+      PUBG: [{ name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,}'}],
+      DEFAULT: [{ name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }]
+    };
+
+    function renderFields(code){
+      const schema = FORM_FIELDS[code] || FORM_FIELDS.DEFAULT;
+      dyn.innerHTML = schema.map(f => `
+        <div class="col-md-6">
+          <label class="form-label">${f.label}${f.required?'<span class="text-danger">*</span>':''}</label>
+          <input class="form-control rounded-4" name="${f.name}"
+                 placeholder="${f.placeholder||''}"
+                 ${f.required?'required':''}
+                 ${f.pattern?`pattern="${f.pattern}"`:''}>
+          ${f.required ? '<div class="invalid-feedback">Wajib isi.</div>' : ''}
+        </div>
+      `).join('');
+    }
+
+    // awalnya sembunyi
+    orderSection.classList.add('d-none');
+
+    // saat dropdown game berubah (atau diklik dari kartu lewat catalog.js yang trigger 'change')
+    gameSel.addEventListener('change', e => {
+      const code = (e.target.value || '').toUpperCase();
+      if (!code) {
+        orderSection.classList.add('d-none');
+        dyn.innerHTML = '';
+        return;
+      }
+      renderFields(code);
+      orderSection.classList.remove('d-none');
+    });
+  })();
+  </script>
+</body>
+</html>
