@@ -1,6 +1,6 @@
 (() => {
   // ====== GANTI dengan punyamu ======
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzCgmf5AXxOnNuacKJuoJdekQALMsk-a3Dxk2jR7ZLXSfuHrbNh1-y0vMwfi87m-pkN/exec';
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbz67mFNM0lcKpBzAPiKzZP9C-ExNRHWgV5bsW-kASV4uiuXhw98I79Ye8t2Ry3kf7bB/exec';
   const API_KEY     = '9247673980b63fc24d566d89ba1d861527b8a99d37c13a91f33c29287f5fa761';
   // ==================================
 
@@ -128,3 +128,4 @@
   // Auto-load bila ADMIN_KEY tersimpan
   setTimeout(()=>{ if ($('#adminKey').value.trim()) loadOrders(); }, 250);
 })();
+
