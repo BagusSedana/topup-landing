@@ -1,25 +1,20 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
-  // ================== UTIL & CONFIG ==================
+  // =========== UTIL & CONFIG ===========
   const PUBLIC_API = '/api/public';
-  const rupiah = (n) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
-      .format(n || 0);
+  const rupiah = n => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(n||0);
+  const qs  = (s,r=document)=>r.querySelector(s);
+  const qsa = (s,r=document)=>Array.from(r.querySelectorAll(s));
+  const getParam = k => new URLSearchParams(location.search).get(k);
 
-  // wait helper -> handle kalau data.js load setelah app.js
-  function waitFor(cond, cb, { timeout = 4000, every = 40 } = {}) {
-    const start = Date.now();
-    (function loop() {
-      if (cond()) return cb();
-      if (Date.now() - start > timeout) return console.warn('[product] data tidak ditemukan (PRICES/GAMES)');
-      setTimeout(loop, every);
+  // wait helper (kalau data.js load belakangan)
+  function waitFor(cond, cb, {timeout=4000, every=40}={}) {
+    const t0 = Date.now(); (function loop(){ if(cond()) return cb();
+      if(Date.now()-t0>timeout) return console.warn('[product] PRICES/GAMES belum ada'); setTimeout(loop,every);
     })();
   }
 
-  const qs  = (s, r=document) => r.querySelector(s);
-  const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
-
-  // ================== DOM refs ==================
+  // =========== DOM ===========
   const orderSection = qs('#orderSection');
   const gameSel      = qs('#game');
   const nominalGrid  = qs('#nominalGrid');
@@ -27,12 +22,49 @@
   const totalPriceEl = qs('#totalPrice');
   const fastMode     = qs('#fastMode');
   const buktiInput   = qs('#buktiTransfer');
-  const btnKirim     = qs('#btnKirim');
   const form         = qs('#orderForm');
-  const yearEl       = qs('#year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+  const yearEl       = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // pastiin container field ada
+  // ----- Modal QR: auto create kalau belum ada -----
+  let payModal, payModalEl = qs('#payModal');
+  if (!payModalEl) {
+    payModalEl = document.createElement('div');
+    payModalEl.id = 'payModal';
+    payModalEl.className = 'modal fade';
+    payModalEl.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header">
+            <h5 class="modal-title">Bayar Pesanan</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center">
+              <img id="payQr" alt="QRIS" style="width:220px;height:220px;object-fit:contain;display:none" />
+              <div id="payInfo" class="small text-muted mt-2"></div>
+              <div id="payTotal" class="fw-bold mt-2"></div>
+              <div id="payExtra" class="mt-2"></div>
+            </div>
+          </div>
+          <div class="modal-footer d-flex flex-wrap gap-2">
+            <button id="btnOpenPayApp" class="btn btn-primary flex-grow-1 d-none" type="button">Buka Aplikasi</button>
+            <button id="btnCopyCode"   class="btn btn-outline-secondary flex-grow-1 d-none" type="button">Salin Kode</button>
+            <button id="btnUploadProof" class="btn btn-success flex-grow-1" type="button">Upload Bukti</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(payModalEl);
+  }
+  payModal = new bootstrap.Modal(payModalEl);
+  const payQr     = qs('#payQr', payModalEl);
+  const payInfo   = qs('#payInfo', payModalEl);
+  const payTotal  = qs('#payTotal', payModalEl);
+  const payExtra  = qs('#payExtra', payModalEl);
+  const btnCopy   = qs('#btnCopyCode', payModalEl);
+  const btnOpen   = qs('#btnOpenPayApp', payModalEl);
+  const btnUpload = qs('#btnUploadProof', payModalEl);
+
+  // =========== Dinamis field per game ===========
   let dyn = qs('#dynamicFields');
   if (!dyn && orderSection) {
     dyn = document.createElement('div');
@@ -40,8 +72,6 @@
     dyn.className = 'row g-3';
     orderSection.prepend(dyn);
   }
-
-  // ================== Field per game ==================
   const FORM_FIELDS = {
     ML: [
       { name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
@@ -66,11 +96,11 @@
     `).join('');
   }
 
-  // ================== HTTP util ==================
+  // =========== HTTP ===========
   async function postJSON(url, obj) {
     const resp = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request (anti preflight)
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // simple request (tanpa preflight)
       body: JSON.stringify(obj)
     });
     const text = await resp.text();
@@ -80,7 +110,6 @@
     return data;
   }
 
-  // Kompres gambar -> dataURL (jpeg)
   async function compressImageToDataURL(file, {maxW=1200, maxH=1200, quality=0.75} = {}) {
     const bmp = await createImageBitmap(file);
     const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
@@ -91,38 +120,29 @@
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         const r = new FileReader();
-        r.onload = () => resolve(r.result); // -> data:image/jpeg;base64,...
+        r.onload = () => resolve(r.result);
         r.readAsDataURL(blob);
       }, 'image/jpeg', quality);
     });
   }
 
-  // ================== Mapping game ==================
-  const getParam = (k) => new URLSearchParams(location.search).get(k);
+  // =========== Mapping game ===========
   const sanitize = (s='') => String(s).toLowerCase().replace(/[^a-z0-9]+/g,'');
   function findPriceCode(inputRaw) {
-    if (!window.PRICES) return null;
-    if (!inputRaw) return null;
-    const up = String(inputRaw).toUpperCase();     // ML
-    const low = String(inputRaw).toLowerCase();    // ml
-    const norm = sanitize(inputRaw);               // mobilelegends
+    if (!window.PRICES || !inputRaw) return null;
+    const up = String(inputRaw).toUpperCase();
+    const low = String(inputRaw).toLowerCase();
+    const norm = sanitize(inputRaw);
 
-    // 1) langsung cocok kode
-    if (PRICES[up]) return up;
-
-    // 2) kalau PRICES punya .slug yang sama
-    for (const code of Object.keys(PRICES)) {
+    if (PRICES[up]) return up;                           // ML
+    for (const code of Object.keys(PRICES)) {            // slug
       const slug = PRICES[code]?.slug;
       if (slug && String(slug).toLowerCase() === low) return code;
     }
-
-    // 3) cocok berdasarkan nama (key) yang disanitasi
-    for (const code of Object.keys(PRICES)) {
+    for (const code of Object.keys(PRICES)) {            // nama
       if (sanitize(PRICES[code]?.key) === norm) return code;
     }
-
-    // 4) pakai GAMES (slug→name→key)
-    if (window.GAMES) {
+    if (window.GAMES) {                                  // dari GAMES
       const g = GAMES[low];
       if (g) {
         const gname = sanitize(g.name);
@@ -139,36 +159,35 @@
     const b  = qs('#gameBanner');
     const bc = qs('#breadcrumbGame');
 
-    // coba dari GAMES
     let name=null, banner=null;
     if (window.GAMES) {
-      const bySlug = GAMES[code?.toLowerCase()];
-      if (bySlug) { name = bySlug.name; banner = bySlug.banner || bySlug.cover || null; }
-      else if (window.PRICES && PRICES[code]) name = PRICES[code].key;
-    } else if (window.PRICES && PRICES[code]) {
-      name = PRICES[code].key;
+      const g = GAMES[code?.toLowerCase()];
+      if (g) { name = g.name; banner = g.banner || g.cover || null; }
     }
+    if (!name && window.PRICES && PRICES[code]) name = PRICES[code].key;
 
     if (t && name)  t.textContent = `Top Up ${name}`;
     if (bc && name) bc.textContent = name;
     if (b && banner) b.src = banner;
   }
 
-  // ================== Nominal render & total ==================
+  // =========== Nominal & total ===========
   let selectedGame = null;
   let selectedItemKey = null;
   let selectedPrice = 0;
   let currentFastFee = 0;
+  let lastOrderId = null;
+  let lastPayInfo = null;
 
   function renderNominals(code) {
     const conf = PRICES[code];
-    if (!conf) { console.warn('[product] PRICES['+code+'] tidak ada'); return; }
+    if (!conf) return;
 
     selectedGame = code;
     selectedItemKey = null;
     selectedPrice = 0;
     currentFastFee = conf.fastFee || 0;
-    if (nominalGrid) nominalGrid.innerHTML = '';
+    nominalGrid.innerHTML = '';
     nominalError?.classList.add('d-none');
 
     const items = conf.items || {};
@@ -202,88 +221,154 @@
     if (fastMode?.checked && total > 0) total += currentFastFee || 0;
     if (totalPriceEl) totalPriceEl.textContent = rupiah(total);
   }
+  fastMode?.addEventListener('change', calcTotal);
 
-  // ================== Form & submit ==================
-  function wireListeners() {
+  // =========== Extract pembayaran dari response ===========
+  function extractPay(d){
+    // support berbagai bentuk response
+    const pay = d.payment || d.pay || d.qris || d.data || {};
+    const qrString = pay.qr_string || pay.qrString || pay.qr || d.qr_string || d.qr;
+    const qrUrl    = pay.qr_url || pay.qrImage || pay.qrImageUrl || d.qr_url;
+    const deeplink = pay.deeplink || pay.app_url || d.deeplink || d.app_url;
+    const va       = pay.va || pay.va_number || d.va || d.va_number;
+    const total    = d.total || pay.total || d.amount || pay.amount;
+    const expires  = pay.expires_at || d.expires_at;
+    const method   = d.payment_method || pay.method || 'qris';
+    return { qrString, qrUrl, deeplink, va, total, expires, method };
+  }
+  function buildQrImgUrlFromString(s){
+    // pakai layanan QR gratis
+    return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(s)}`;
+  }
+
+  // =========== Listeners ===========
+  function wireListeners(){
     if (gameSel) {
       if (orderSection) orderSection.classList.add('d-none');
       gameSel.addEventListener('change', e => {
         const val = e.target.value;
         if (!val) {
-          if (nominalGrid) nominalGrid.innerHTML = '';
-          if (totalPriceEl) totalPriceEl.textContent = rupiah(0);
-          if (orderSection) orderSection.classList.add('d-none');
-          if (dyn) dyn.innerHTML = '';
+          nominalGrid.innerHTML = '';
+          totalPriceEl.textContent = rupiah(0);
+          orderSection?.classList.add('d-none');
+          dyn.innerHTML = '';
           return;
         }
         renderNominals(val);
         renderFields(val);
         syncProductHeader(val);
         localStorage.setItem('lastGame', val);
-        if (orderSection) orderSection.classList.remove('d-none');
+        orderSection?.classList.remove('d-none');
       });
     }
-    fastMode?.addEventListener('change', calcTotal);
 
+    // SUBMIT: bikin order → tampilkan modal QR
     form?.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       if (!form.checkValidity()) { ev.stopPropagation(); form.classList.add('was-validated'); return; }
-      if (!selectedItemKey) { nominalError?.classList.remove('d-none'); nominalGrid.scrollIntoView({ behavior:'smooth', block:'center' }); return; }
+      if (!selectedItemKey) { nominalError?.classList.remove('d-none'); nominalGrid.scrollIntoView({behavior:'smooth', block:'center'}); return; }
       nominalError?.classList.add('d-none');
 
-      const f = buktiInput?.files?.[0];
-      if (!f) { alert('Upload bukti transfer dulu 🙏'); return; }
-      if (!/^image\//.test(f.type)) { alert('File harus gambar ya.'); return; }
-      if (f.size > 10 * 1024 * 1024) { alert('Maksimal 10MB ya.'); return; }
+      const v = (n) => (form?.[n]?.value || '').trim();
+      const conf = PRICES[selectedGame];
+      const item = conf.items[selectedItemKey];
 
-      const prev = btnKirim.innerHTML;
-      btnKirim.disabled = true;
-      btnKirim.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+      const total = (item?.price || 0) + (fastMode?.checked ? (conf.fastFee || 0) : 0);
+
+      const payload = {
+        action: 'create_order',
+        origin: location.origin,
+        game_code: selectedGame,             // ML/FF/PUBG
+        game_name: conf.key,                 // "Mobile Legends"
+        item_key: selectedItemKey,
+        item_label: item?.label,
+        price: item?.price,
+        fast: !!fastMode?.checked,
+        fast_fee: conf.fastFee || 0,
+        total,
+        // data akun
+        player_id: v('player_id'),
+        server_id: v('server_id') || undefined,
+        whatsapp: v('whatsapp') || undefined,
+        note: v('note') || undefined,
+        // prefer qris dulu
+        payment_method: 'qris',
+        timestamp: new Date().toISOString()
+      };
 
       try {
-        const v = (n) => (form?.[n]?.value || '').trim();
-        const basePayload = {
-          action: 'create_order',
-          origin: location.origin,
-          game: selectedGame,
-          item_key: selectedItemKey,
-          player_id: v('player_id'),
-          server_id: v('server_id'),
-          whatsapp: v('whatsapp'),
-          note: v('note'),
-          fast: !!fastMode?.checked,
-          timestamp: new Date().toISOString()
-        };
+        const d1 = await postJSON(PUBLIC_API, payload);
+        if (!d1.ok && !d1.order_id) throw new Error(d1.error || 'Create order failed');
 
-        const d1 = await postJSON(PUBLIC_API, basePayload);
-        if (!d1.ok) throw new Error(d1.error || 'Create order failed');
+        lastOrderId = d1.order_id || d1.id || null;
+        lastPayInfo = extractPay(d1);
 
-        alert(`Order diterima! ID: ${d1.order_id}\nBukti sedang diunggah...`);
-        if (basePayload.whatsapp) {
-          const wa = `https://wa.me/${basePayload.whatsapp}?text=${encodeURIComponent('Halo! Pesanan kamu kami terima. Order ID: ' + d1.order_id)}`;
-          window.open(wa, '_blank', 'noopener');
+        // tampilkan modal QR
+        payTotal.textContent = 'Total: ' + rupiah(lastPayInfo.total || total);
+        payInfo.textContent  = lastPayInfo.expires ? ('Bayar sebelum: ' + new Date(lastPayInfo.expires).toLocaleString('id-ID')) : 'Scan untuk bayar';
+
+        let qrImg = null;
+        if (lastPayInfo.qrUrl) qrImg = lastPayInfo.qrUrl;
+        else if (lastPayInfo.qrString) qrImg = buildQrImgUrlFromString(lastPayInfo.qrString);
+
+        if (qrImg) { payQr.src = qrImg; payQr.style.display = ''; } else { payQr.style.display = 'none'; }
+
+        btnOpen.classList.toggle('d-none', !lastPayInfo.deeplink);
+        btnCopy.classList.toggle('d-none', !(lastPayInfo.qrString || lastPayInfo.va));
+
+        // extra info (VA / instruksi)
+        payExtra.innerHTML = '';
+        if (lastPayInfo.va) {
+          payExtra.innerHTML = `<div class="mt-2">VA Number: <code>${lastPayInfo.va}</code></div>`;
+        } else if (!qrImg) {
+          payExtra.innerHTML = `<div class="mt-2 small text-muted">Kode bayar belum tersedia. Coba ulang atau hubungi CS.</div>`;
         }
 
-        const buktiBase64 = await compressImageToDataURL(f, { maxW: 1200, maxH: 1200, quality: 0.75 });
-        await postJSON(PUBLIC_API, { action: 'upload_proof', order_id: d1.order_id, bukti: buktiBase64 });
-
-        form.reset();
-        if (nominalGrid) nominalGrid.innerHTML = '';
-        selectedItemKey = null; selectedPrice = 0; calcTotal();
+        payModal.show();
 
       } catch (err) {
         console.error(err);
-        alert('Gagal memproses. Coba lagi ya 🙏\n\n' + (err.message || err));
-      } finally {
-        btnKirim.disabled = false;
-        btnKirim.innerHTML = prev;
+        alert('Gagal membuat pesanan. ' + (err.message || err));
+      }
+    });
+
+    // tombol Copy
+    btnCopy?.addEventListener('click', async () => {
+      const txt = lastPayInfo?.qrString || lastPayInfo?.va || '';
+      if (!txt) return;
+      await navigator.clipboard.writeText(txt);
+      btnCopy.textContent = 'Disalin ✓';
+      setTimeout(()=>btnCopy.textContent='Salin Kode',1200);
+    });
+
+    // tombol Open App
+    btnOpen?.addEventListener('click', () => {
+      if (lastPayInfo?.deeplink) window.open(lastPayInfo.deeplink, '_blank', 'noopener');
+    });
+
+    // Upload bukti dari input halaman (opsional)
+    btnUpload?.addEventListener('click', async () => {
+      try{
+        const f = buktiInput?.files?.[0];
+        if (!f) { alert('Pilih bukti transfer dulu ya 🙏'); return; }
+        if (!/^image\//.test(f.type)) { alert('File harus gambar'); return; }
+        if (f.size > 10*1024*1024) { alert('Maksimal 10MB'); return; }
+        if (!lastOrderId) { alert('Order belum terbentuk. Klik "Buat Pesanan" dulu.'); return; }
+
+        const buktiBase64 = await compressImageToDataURL(f, {maxW:1200,maxH:1200,quality:0.75});
+        const d2 = await postJSON(PUBLIC_API, { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 });
+        if (d2.ok) { alert('Bukti diterima. Terima kasih!'); payModal.hide(); }
+        else { throw new Error(d2.error || 'Upload gagal'); }
+      }catch(err){
+        console.error(err);
+        alert('Upload bukti gagal. ' + (err.message||err));
       }
     });
   }
 
-  // ================== BOOT ==================
-  function boot() {
-    // isi select (kalau ada)
+  // =========== Boot ===========
+  function boot(){
+    // isi <select> kalau ada
     if (gameSel && window.PRICES) {
       const frag = document.createDocumentFragment();
       Object.keys(PRICES).forEach(code => {
@@ -297,14 +382,11 @@
 
     wireListeners();
 
-    // resolve kode dari URL / storage
-    const paramGame = getParam('game'); // ml atau ML atau mobile-legends
+    const paramGame = getParam('game');
     const lastGame  = localStorage.getItem('lastGame');
-    const codeFromParam = findPriceCode(paramGame);
-    const codeFromLast  = findPriceCode(lastGame);
-    const initCode      = codeFromParam || codeFromLast;
+    const initCode  = findPriceCode(paramGame) || findPriceCode(lastGame);
 
-    if (initCode && window.PRICES && PRICES[initCode]) {
+    if (initCode && PRICES[initCode]) {
       if (gameSel) {
         gameSel.value = initCode;
         gameSel.dispatchEvent(new Event('change', { bubbles:true }));
@@ -312,15 +394,13 @@
         renderNominals(initCode);
         renderFields(initCode);
         syncProductHeader(initCode);
-        if (orderSection) orderSection.classList.remove('d-none');
+        orderSection?.classList.remove('d-none');
       }
     } else {
-      // fallback: sembunyiin form sampai user pilih manual
-      if (orderSection) orderSection.classList.add('d-none');
-      console.warn('[product] gagal resolve game dari query. Pastikan ?game=ml/ML/nama.');
+      orderSection?.classList.add('d-none');
+      console.warn('[product] gagal resolve game dari query. Pastikan ?game=ml/ff/pubg.');
     }
   }
 
-  // jalankan setelah PRICES siap (GAMES opsional)
-  waitFor(() => typeof window.PRICES !== 'undefined', boot);
+  waitFor(()=> typeof window.PRICES!=='undefined', boot);
 })();
