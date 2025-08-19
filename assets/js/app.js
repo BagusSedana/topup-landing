@@ -43,23 +43,27 @@
 
   // --------------------- DOM REFERENCES --------------------
   const orderSection = qs('#orderSection');
+  const form         = qs('#orderForm');           // <<< penting: form utama
   const gameSel      = qs('#game');
   const nominalGrid  = qs('#nominalGrid');
   const nominalError = qs('#nominalError');
   const totalPriceEl = qs('#totalPrice');
   const fastMode     = qs('#fastMode');
   const buktiInput   = qs('#buktiTransfer');
-  const form         = qs('#orderForm');
   const yearEl       = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // container dinamis untuk field akun (auto-create kalau belum ada)
+  // container dinamis untuk field akun → PASTIKAN masuk ke dalam <form>
   let dyn = qs('#dynamicFields');
-  if (!dyn && orderSection) {
+  if (!dyn) {
     dyn = document.createElement('div');
     dyn.id = 'dynamicFields';
     dyn.className = 'row g-3';
-    orderSection.prepend(dyn);
+    if (form) form.insertBefore(dyn, form.firstChild);   // <<< dimasukkan ke DALAM form
+    else if (orderSection) orderSection.prepend(dyn);
+  } else {
+    // kalau sudah ada tapi di luar form, pindahkan ke dalam form
+    if (form && !form.contains(dyn)) form.insertBefore(dyn, form.firstChild);
   }
 
   // ----------------------- QR MODAL ------------------------
@@ -113,7 +117,6 @@
   };
 
   function renderFields(code){
-    if (!dyn) return;
     const schema = FORM_FIELDS[code] || FORM_FIELDS.DEFAULT;
     dyn.innerHTML = schema.map(f => `
       <div class="col-md-6">
@@ -326,7 +329,12 @@
       if (!selectedItemKey) { nominalError?.classList.remove('d-none'); nominalGrid.scrollIntoView({behavior:'smooth', block:'center'}); return; }
       nominalError?.classList.add('d-none');
 
-      const v = (n) => (form?.[n]?.value || '').trim();
+      // ambil value; fallback cari di dokumen kalau input tidak berada di dalam form
+      const readVal = (n) => {
+        const el = (form && form[n]) || document.querySelector(`[name="${n}"]`);
+        return (el?.value || '').trim();
+      };
+
       const conf = PRICES[selectedGame];
       const item = conf.items[selectedItemKey];
       const total = (item?.price || 0) + (fastMode?.checked ? (conf.fastFee || 0) : 0);
@@ -334,9 +342,9 @@
       const payload = {
         action: 'create_order',
         // produk
-        game: selectedGame,                // ML / FF / PUBG
-        game_name: conf.key,               // "Mobile Legends"
-        item_key: selectedItemKey,         // d12, ml_86, etc
+        game: selectedGame || findPriceCode(getParam('game')) || Object.keys(PRICES)[0],
+        game_name: conf.key,
+        item_key: selectedItemKey,
         item_label: item?.label,
         price: item?.price,
         quantity: 1,
@@ -345,13 +353,13 @@
         total,
 
         // akun
-        player_id: v('player_id'),
-        server_id: v('server_id') || undefined,
+        player_id: readVal('player_id'),
+        server_id: readVal('server_id') || undefined,
 
         // customer (normalisasi WA ke 62)
-        whatsapp: to62(v('whatsapp')),
-        customer_phone: to62(v('whatsapp')),
-        note: v('note') || undefined,
+        whatsapp: to62(readVal('whatsapp')),
+        customer_phone: to62(readVal('whatsapp')),
+        note: readVal('note') || undefined,
 
         // pembayaran
         payment_method: 'qris',
@@ -379,7 +387,8 @@
         lastPayInfo = extractPay(d1);
 
         // tampilkan modal QR
-        payTotal.textContent = 'Total: ' + rupiah(lastPayInfo.total || total);
+        const totalPay = lastPayInfo.total || total;
+        payTotal.textContent = 'Total: ' + rupiah(totalPay);
         payInfo.textContent  = lastPayInfo.expires ? ('Bayar sebelum: ' + new Date(lastPayInfo.expires).toLocaleString('id-ID')) : 'Scan untuk bayar';
 
         let qrImg = null;
