@@ -1,28 +1,23 @@
 /* global GAMES */
 (() => {
-  // ===== ready shim (jalan walau script di <head> & tanpa defer)
+  // ready shim
   const ready = (fn) =>
     (document.readyState !== 'loading')
       ? fn()
       : document.addEventListener('DOMContentLoaded', fn);
 
-  // ===== util
-  const $, $$ = (s, r = document) => r.querySelector(s);
+  // util
+  const badge = (t, cls='badge-soft') => `<span class="badge rounded-pill ${cls}">${t}</span>`;
   function ensureMount(id, cls = '') {
     let el = document.getElementById(id);
     if (el) return el;
-    // taruh di <main> kalau ada, kalau nggak di .container, kalau nggak ya body
-    const host = $('main') || $('.container') || document.body;
-    el = document.createElement('div');
-    el.id = id;
-    if (cls) el.className = cls;
-    host.appendChild(el);
-    console.warn(`[home] #${id} belum ada → dibuat otomatis di ${host.tagName.toLowerCase()}`);
+    const host = document.querySelector('main') || document.querySelector('.container') || document.body;
+    el = document.createElement('div'); el.id = id; if (cls) el.className = cls; host.appendChild(el);
+    console.warn(`[home] #${id} auto-created`);
     return el;
   }
-  const badge = (t, cls='badge-soft') => `<span class="badge rounded-pill ${cls}">${t}</span>`;
 
-  // ===== dummy data (non-game) – silakan ganti
+  // Data dummy (non-game). Bebas ganti.
   const TRENDING = [
     { name:'DANA', img:'https://i.imgur.com/6wABv0k.png' },
     { name:'ZEPETO', img:'https://i.imgur.com/fC1m5w1.png' },
@@ -84,10 +79,9 @@
     { slug:'pubgm', name:'PUBGM Global',   cover:'https://i.imgur.com/rgYt9FQ.png', sold:'Terjual 10rb+', dis:'-10%', instan:true }
   ];
 
-  // ===== renderers
   function renderPopular(){
     const wrap = ensureMount('popularGrid', 'row g-3');
-    const data = (window.GAMES
+    const list = (window.GAMES
       ? Object.values(GAMES).map(g => ({
           slug:g.slug, name:g.name,
           cover:g.cover || g.img || '',
@@ -95,17 +89,17 @@
           dis:g.discount || '',
           instan: g.instan !== false
         }))
-      : FALLBACK_GAMES).slice(0, 6);
+      : FALLBACK_GAMES).slice(0,6);
 
-    wrap.innerHTML = data.map(g => `
+    wrap.innerHTML = list.map(g => `
       <div class="col-6 col-md-4 col-lg-2">
         <a class="text-decoration-none" href="product.html?game=${g.slug}">
           <div class="card-game">
             <img class="thumb" src="${g.cover}" alt="${g.name}" loading="lazy">
             <div class="p-2">
               <div class="d-flex gap-1 mb-1">
-                ${g.dis ? badge(g.dis,'badge-dis') : ''}
-                ${g.instan ? badge('Instan','badge-instant') : ''}
+                ${g.dis? badge(g.dis,'badge-dis'):''}
+                ${g.instan? badge('Instan','badge-instant'):''}
               </div>
               <div class="fw-semibold small text-dark">${g.name}</div>
             </div>
@@ -116,8 +110,8 @@
     `).join('');
   }
 
-  function renderMiniGrid(arr, id){
-    const el = ensureMount(id, 'row g-3');
+  function renderMiniGrid(arr, targetId){
+    const el = ensureMount(targetId, 'row g-3');
     el.innerHTML = arr.map(x => `
       <div class="col-6 col-md-3 col-lg-2">
         <a href="#" class="text-decoration-none">
@@ -131,8 +125,8 @@
     `).join('');
   }
 
-  function renderChips(arr, id){
-    const el = ensureMount(id, 'h-scroll pb-1');
+  function renderChips(arr, targetId){
+    const el = ensureMount(targetId, 'pb-1');
     el.innerHTML = arr.map(x => `
       <a href="#" class="chip text-decoration-none">
         <img src="${x.img}" alt="${x.name}" style="width:24px;height:24px;object-fit:contain">
@@ -142,18 +136,14 @@
   }
 
   function init(){
-    // tahun footer (opsional)
-    const y = $('#y'); if (y) y.textContent = new Date().getFullYear();
-
-    // render
-    try { renderPopular(); } catch (e) { console.error('[home] popular error', e); }
-    try { renderMiniGrid(TRENDING, 'trendingGrid'); } catch (e) { console.error('[home] trending error', e); }
-    try { renderMiniGrid(DAILY, 'dailyGrid'); } catch (e) { console.error('[home] harian error', e); }
-    try { renderChips(WALLETS, 'walletChips'); } catch (e) { console.error('[home] wallet error', e); }
-    try { renderMiniGrid(PULSA, 'pulsaGrid'); } catch (e) { console.error('[home] pulsa error', e); }
-    try { renderMiniGrid(GAMECAT, 'gameGrid'); } catch (e) { console.error('[home] game cat error', e); }
-    try { renderMiniGrid(APPS, 'appGrid'); } catch (e) { console.error('[home] app error', e); }
-
+    const y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+    renderPopular();
+    renderMiniGrid(TRENDING, 'trendingGrid');
+    renderMiniGrid(DAILY, 'dailyGrid');
+    renderChips(WALLETS, 'walletChips');
+    renderMiniGrid(PULSA, 'pulsaGrid');
+    renderMiniGrid(GAMECAT, 'gameGrid');
+    renderMiniGrid(APPS, 'appGrid');
     console.info('[home] loaded ✓');
   }
 
