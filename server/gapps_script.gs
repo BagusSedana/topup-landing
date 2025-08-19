@@ -1,8 +1,9 @@
 /** ===============================
  * Topup Landing — Apps Script (SECURE + FAST, 2-step)
- * - Rahasia via Script Properties (DRIVE_FOLDER_ID, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, API_KEY)
+ * - Secrets via Script Properties (DRIVE_FOLDER_ID, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, API_KEY, ADMIN_KEY)
  * - Step 1: create_order  -> respon instan (tanpa bukti)
  * - Step 2: upload_proof  -> upload bukti + update sheet + notif Telegram
+ * - Admin: list_orders, update_status (butuh ADMIN_KEY)
  * Deploy: Web app → Execute as: Me, Access: Anyone → pakai URL /exec
  * =============================== */
 
@@ -14,6 +15,7 @@ const CFG = (() => {
     TELEGRAM_BOT_TOKEN: P.getProperty('TELEGRAM_BOT_TOKEN') || '',
     TELEGRAM_CHAT_ID: P.getProperty('TELEGRAM_CHAT_ID') || '',
     API_KEY: P.getProperty('API_KEY') || '',
+    ADMIN_KEY: P.getProperty('ADMIN_KEY') || '',
     PRICES: {
       ML: {
         key: 'Mobile Legends',
@@ -36,7 +38,7 @@ const CFG = (() => {
 })();
 
 // ---------- helpers ----------
-const J = (o) => ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+const J  = (o) => ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
 const rp = (n) => 'Rp ' + Number(n||0).toLocaleString('id-ID');
 
 function sheet_() {
@@ -62,13 +64,25 @@ function doPost(e){
   try{
     const data = JSON.parse((e.postData && e.postData.contents) || '{}');
 
-    // API key gate
+    // API key gate (semua request harus bawa API_KEY)
     if (!CFG.API_KEY || data.api_key !== CFG.API_KEY) return J({ error:'Unauthorized' });
 
     const action = (data.action || 'create_order').toLowerCase();
+
     if (action === 'create_order')  return createOrder_(data);
     if (action === 'upload_proof')  return uploadProof_(data);
-    if (action === 'update_status') return updateStatus_(data);
+
+    // ==== ADMIN actions (butuh ADMIN_KEY) ====
+    if (action === 'list_orders') {
+      if (!CFG.ADMIN_KEY || data.admin_key !== CFG.ADMIN_KEY) return J({ error:'Unauthorized' });
+      return listOrders_(data);
+    }
+    if (action === 'update_status') {
+      if (!CFG.ADMIN_KEY || data.admin_key !== CFG.ADMIN_KEY) return J({ error:'Unauthorized' });
+      return updateStatus_(data);
+    }
+    // =========================================
+
     return J({ error:'Unknown action' });
   }catch(err){ return J({ error:String(err) }); }
 }
@@ -106,9 +120,7 @@ function createOrder_(d){
 }
 
 // ---- Step 2: upload bukti ----
-// versi untuk ngecek di Telegram
-const APP_VER = 'v2.1-html-totalfix';
-
+const APP_VER = 'v4.1-totalfix';
 function uploadProof_(d){
   if (!d.order_id || !d.bukti) return J({ error:'Missing order_id/bukti' });
 
@@ -137,19 +149,16 @@ function uploadProof_(d){
   // === Telegram notif (opsional) ===
   if (CFG.TELEGRAM_BOT_TOKEN && CFG.TELEGRAM_CHAT_ID) {
     const v = sh.getRange(found.row, 1, 1, 13).getValues()[0];
-    // Kolom baris:
-    // [A Timestamp, B OrderID, C Game, D Item, E PlayerID, F ServerID, G WA, H Fast, I Total, J Status, K Bukti, L Note, M Origin]
     const orderId   = v[1];
-    const gameName  = v[2];  // contoh: "Mobile Legends"
-    const itemLabel = v[3];  // contoh: "1412 Diamonds"
+    const gameName  = v[2];
+    const itemLabel = v[3];
     const pid       = v[4];
     const sid       = v[5];
 
-    // Fast dari kolom H (boolean/teks/angka → normalisasi)
     const fastRaw = v[7];
     const fast = (fastRaw === true) || String(fastRaw).toLowerCase() === 'true' || fastRaw === 1 || String(fastRaw) === '1';
 
-    // === HITUNG ULANG TOTAL DARI WHITELIST (bukan dari Sheet) ===
+    // Hitung ulang total dari whitelist
     const norm = s => String(s || '').replace(/\s+/g,' ').trim().toLowerCase();
     const G = Object.values(CFG.PRICES).find(p => norm(p.key) === norm(gameName));
     let total = 0;
@@ -157,7 +166,6 @@ function uploadProof_(d){
       const key = Object.keys(G.items).find(k => norm(G.items[k].label) === norm(itemLabel));
       if (key) total = (G.items[key].price || 0) + (fast ? (G.fastFee || 0) : 0);
     }
-    // Fallback: kalau (jarang) label gak ketemu, coba comot angka dari kolom I (meski format "Rp ...")
     if (!total) {
       const totalRaw = v[8];
       total = (typeof totalRaw === 'number') ? totalRaw : Number(String(totalRaw || '').replace(/[^\d]/g,''));
@@ -172,18 +180,12 @@ function uploadProof_(d){
       `Player: <b>${pid}${sid ? ' ('+sid+')' : ''}</b>`,
       `Fast: <b>${fast ? 'YA' : 'TIDAK'}</b>`,
       `Total: <b>${rp(total)}</b>`,
-      `<a href="${buktiUrl}">Bukti</a>`,
-      `<i>${APP_VER}</i>`
+      `<a href="${buktiUrl}">Bukti</a>`
     ].join('\n');
 
     UrlFetchApp.fetch('https://api.telegram.org/bot' + CFG.TELEGRAM_BOT_TOKEN + '/sendMessage', {
       method: 'post',
-      payload: {
-        chat_id: CFG.TELEGRAM_CHAT_ID,
-        text,
-        parse_mode: 'HTML',           // HTML biar link rapi
-        disable_web_page_preview: true
-      },
+      payload: { chat_id: CFG.TELEGRAM_CHAT_ID, text, parse_mode: 'HTML', disable_web_page_preview: true },
       muteHttpExceptions: true
     });
   }
@@ -191,8 +193,46 @@ function uploadProof_(d){
   return J({ ok:true });
 }
 
+// ---- Admin: list orders (baru) ----
+function listOrders_(d){
+  const limit = Math.max(1, Math.min(500, Number(d.limit || 100)));
+  const statusFilter = String(d.status || '').toUpperCase();
+  const q = String(d.q || '').toLowerCase();
 
+  const sh = sheet_();
+  const last = sh.getLastRow();
+  if (last < 2) return J({ ok:true, items:[] });
 
+  const rows = sh.getRange(2, 1, last - 1, 13).getValues(); // A..M
+  const out = [];
+  for (let i = rows.length - 1; i >= 0 && out.length < limit; i--) {
+    const v = rows[i];
+    const ts=v[0], orderId=v[1], game=v[2], item=v[3], pid=v[4], sid=v[5], wa=v[6],
+          fast=!!v[7], totalRaw=v[8], status=String(v[9]||'').toUpperCase(),
+          bukti=v[10]||'', note=v[11]||'', origin=v[12]||'';
+
+    if (statusFilter && status !== statusFilter) continue;
+
+    const hay = [orderId, game, item, pid, sid, wa, status, note].join(' ').toLowerCase();
+    if (q && !hay.includes(q)) continue;
+
+    // mapping TopupGim URL dari CFG.PRICES
+    const norm = s => String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+    const G = Object.values(CFG.PRICES).find(p => norm(p.key) === norm(game));
+    const topupgimUrl = G ? (G.topupgimUrl || '') : '';
+
+    const total = (typeof totalRaw === 'number') ? totalRaw : Number(String(totalRaw||'').replace(/[^\d]/g,'')||0);
+
+    out.push({
+      ts: (ts instanceof Date ? ts.toISOString() : String(ts)),
+      order_id: orderId, game, item,
+      player_id: String(pid||''), server_id: String(sid||''),
+      whatsapp: String(wa||''), fast, total, status,
+      bukti_url: bukti, note, origin, topupgim_url: topupgimUrl
+    });
+  }
+  return J({ ok:true, items: out });
+}
 
 // ---- Admin: update status ----
 function updateStatus_(d){
