@@ -54,6 +54,53 @@
     </div>
   </header>
 
+    <!-- KATEGORI + GRID PRODUK -->
+  <section class="container my-5" id="kategori">
+    <!-- Kategori (scrollable on mobile) -->
+    <div class="cat-wrap mb-4" role="tablist" aria-label="Kategori Produk">
+      <button class="cat-btn active" data-cat="game"    aria-selected="true">
+        <span class="cat-ico" aria-hidden="true">
+          <!-- gamepad -->
+          <svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 4 4v1a5 5 0 0 1-5 5h-2l-2-2h-2l-2 2H7a5 5 0 0 1-5-5v-1a4 4 0 0 1 4-4Z"/><path d="M8 12h4M10 10v4M17 11h.01M19 13h.01" /></svg>
+        </span>
+        <span>Game</span>
+      </button>
+  
+      <button class="cat-btn" data-cat="ewallet" aria-selected="false">
+        <span class="cat-ico" aria-hidden="true">
+          <!-- wallet -->
+          <svg viewBox="0 0 24 24"><path d="M3 7a3 3 0 0 1 3-3h12a2 2 0 0 1 2 2v2H6a2 2 0 0 1-2-2Z"/><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M16 13h2" /></svg>
+        </span>
+        <span>E-Wallet</span>
+      </button>
+  
+      <button class="cat-btn" data-cat="pulsa" aria-selected="false">
+        <span class="cat-ico" aria-hidden="true">
+          <!-- phone -->
+          <svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2" /></svg>
+        </span>
+        <span>Pulsa</span>
+      </button>
+  
+      <button class="cat-btn" data-cat="apps" aria-selected="false">
+        <span class="cat-ico" aria-hidden="true">
+          <!-- grid -->
+          <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg>
+        </span>
+        <span>Aplikasi</span>
+      </button>
+    </div>
+  
+    <!-- Title -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h3 class="m-0 fw-semibold" id="catTitle">Game Populer</h3>
+      <div class="small text-muted" id="catCount"></div>
+    </div>
+  
+    <!-- Grid -->
+    <div id="catGrid" class="row g-3"></div>
+  </section>
+
   <main class="py-5" id="order">
     <div class="container">
       <div class="row g-4">
