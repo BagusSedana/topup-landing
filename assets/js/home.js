@@ -71,12 +71,12 @@
     { name:'Likee',               img:'https://i.imgur.com/8VwJ0jK.png' }
   ];
   const FALLBACK_GAMES = [
-    { slug:'ml',    name:'Mobile Legends', cover:'https://i.imgur.com/3zQnXwq.png', sold:'Terjual 10rb+', dis:'-15%', instan:true },
-    { slug:'mcg',   name:'Magic Chess Go', cover:'https://i.imgur.com/7p4x5ob.png', sold:'Terjual 6rb+',  dis:'-15%', instan:true },
-    { slug:'ff',    name:'Free Fire',      cover:'https://i.imgur.com/2fVtQcx.png', sold:'Terjual 10rb+', dis:'-20%', instan:true },
-    { slug:'hok',   name:'Honor of Kings', cover:'https://i.imgur.com/9aZgkQm.png', sold:'Terjual 10rb+', dis:'-20%', instan:true },
-    { slug:'hago',  name:'HAGO',           cover:'https://i.imgur.com/gAKp1lH.png', sold:'Terjual 10rb+', dis:'-15%', instan:true },
-    { slug:'pubgm', name:'PUBGM Global',   cover:'https://i.imgur.com/rgYt9FQ.png', sold:'Terjual 10rb+', dis:'-10%', instan:true }
+    { slug:'ml',    name:'Mobile Legends', cover:'https://cdn.topupgim.com/product-tiles/4a6c27d3-12f4-42d0-a153-65588068ff2a.png', sold:'Terjual 10rb+', dis:'-15%', instan:true },
+    { slug:'mcg',   name:'Magic Chess Go', cover:'https://cdn.topupgim.com/product-tiles/7c2d9f47-9030-4b98-b0e7-4c741c060935.png', sold:'Terjual 6rb+',  dis:'-15%', instan:true },
+    { slug:'ff',    name:'Free Fire',      cover:'https://cdn.topupgim.com/product-tiles/1d2a30ea-987b-452c-a658-8fae63176cc6.png', sold:'Terjual 10rb+', dis:'-20%', instan:true },
+    { slug:'hok',   name:'Honor of Kings', cover:'https://cdn.topupgim.com/product-tiles/18baee53-a677-48aa-af20-63a8326d773b.jpg', sold:'Terjual 10rb+', dis:'-20%', instan:true },
+    { slug:'hago',  name:'HAGO',           cover:'https://cdn.topupgim.com/product-tiles/4c6e19a1-1aaa-4bb4-8f3d-c321a31a250e.png', sold:'Terjual 10rb+', dis:'-15%', instan:true },
+    { slug:'pubgm', name:'PUBGM Global',   cover:'https://cdn.topupgim.com/product-tiles/7c8630ec-8447-45f0-85b6-5ae6a860460d.png', sold:'Terjual 10rb+', dis:'-10%', instan:true }
   ];
 
   function renderPopular(){
