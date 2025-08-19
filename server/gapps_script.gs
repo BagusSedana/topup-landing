@@ -106,6 +106,9 @@ function createOrder_(d){
 }
 
 // ---- Step 2: upload bukti ----
+// versi untuk ngecek di Telegram
+const APP_VER = 'v2.1-html-totalfix';
+
 function uploadProof_(d){
   if (!d.order_id || !d.bukti) return J({ error:'Missing order_id/bukti' });
 
@@ -113,7 +116,7 @@ function uploadProof_(d){
   const found = findRow_(sh, d.order_id);
   if (!found) return J({ error:'Order not found' });
 
-  // --- validasi dataURL & ukuran ≤3MB ---
+  // validasi dataURL & ukuran ≤3MB
   const m = String(d.bukti).match(/^data:(.+);base64,(.+)$/);
   if (!m) return J({ error:'Invalid proof format' });
   const ct = m[1];
@@ -121,39 +124,43 @@ function uploadProof_(d){
   const bytes = Utilities.base64Decode(m[2]);
   if (bytes.length > 3*1024*1024) return J({ error:'Proof too large (>3MB)' });
 
-  // --- upload ke Drive ---
+  // upload bukti ke Drive
   const folder = DriveApp.getFolderById(CFG.DRIVE_FOLDER_ID);
   const file = folder.createFile(Utilities.newBlob(bytes, ct, `bukti_${Date.now()}.jpg`));
   try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch(_) {}
   const buktiUrl = file.getUrl();
 
-  // --- update sheet ---
-  sh.getRange(found.row, 11).setValue(buktiUrl);  // K: BuktiURL
-  sh.getRange(found.row, 10).setValue('PENDING'); // J: Status
+  // update sheet: BuktiURL & Status
+  sh.getRange(found.row, 11).setValue(buktiUrl);   // K: BuktiURL
+  sh.getRange(found.row, 10).setValue('PENDING');  // J: Status
 
-  // --- Telegram notif (opsional) ---
+  // === Telegram notif (opsional) ===
   if (CFG.TELEGRAM_BOT_TOKEN && CFG.TELEGRAM_CHAT_ID) {
     const v = sh.getRange(found.row, 1, 1, 13).getValues()[0];
-    const orderId = v[1];              // B
-    const gameName = v[2];             // C (contoh: "Mobile Legends")
-    const itemLabel = v[3];            // D (contoh: "1412 Diamonds")
-    const pid = v[4];                   // E
-    const sid = v[5];                   // F
-    const fastRaw = v[7];               // H
+    // Kolom baris:
+    // [A Timestamp, B OrderID, C Game, D Item, E PlayerID, F ServerID, G WA, H Fast, I Total, J Status, K Bukti, L Note, M Origin]
+    const orderId   = v[1];
+    const gameName  = v[2];  // contoh: "Mobile Legends"
+    const itemLabel = v[3];  // contoh: "1412 Diamonds"
+    const pid       = v[4];
+    const sid       = v[5];
+
+    // Fast dari kolom H (boolean/teks/angka → normalisasi)
+    const fastRaw = v[7];
     const fast = (fastRaw === true) || String(fastRaw).toLowerCase() === 'true' || fastRaw === 1 || String(fastRaw) === '1';
 
-    // === HITUNG ULANG TOTAL DARI WHITELIST (bukan dari sheet) ===
-    const norm = (s) => String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+    // === HITUNG ULANG TOTAL DARI WHITELIST (bukan dari Sheet) ===
+    const norm = s => String(s || '').replace(/\s+/g,' ').trim().toLowerCase();
     const G = Object.values(CFG.PRICES).find(p => norm(p.key) === norm(gameName));
     let total = 0;
     if (G) {
       const key = Object.keys(G.items).find(k => norm(G.items[k].label) === norm(itemLabel));
       if (key) total = (G.items[key].price || 0) + (fast ? (G.fastFee || 0) : 0);
     }
-    // fallback super-aman: kalau masih 0 (gak ketemu), coba baca angka dari kolom I (meski teks)
+    // Fallback: kalau (jarang) label gak ketemu, coba comot angka dari kolom I (meski format "Rp ...")
     if (!total) {
-      const totalRaw = v[8]; // I
-      total = (typeof totalRaw === 'number') ? totalRaw : Number(String(totalRaw||'').replace(/[^\d]/g,''));
+      const totalRaw = v[8];
+      total = (typeof totalRaw === 'number') ? totalRaw : Number(String(totalRaw || '').replace(/[^\d]/g,''));
       if (!total || isNaN(total)) total = 0;
     }
 
@@ -165,15 +172,16 @@ function uploadProof_(d){
       `Player: <b>${pid}${sid ? ' ('+sid+')' : ''}</b>`,
       `Fast: <b>${fast ? 'YA' : 'TIDAK'}</b>`,
       `Total: <b>${rp(total)}</b>`,
-      `<a href="${buktiUrl}">Bukti</a>`
+      `<a href="${buktiUrl}">Bukti</a>`,
+      `<i>${APP_VER}</i>`
     ].join('\n');
 
     UrlFetchApp.fetch('https://api.telegram.org/bot' + CFG.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-      method:'post',
-      payload:{
+      method: 'post',
+      payload: {
         chat_id: CFG.TELEGRAM_CHAT_ID,
         text,
-        parse_mode: 'HTML',              // HTML biar link rapi
+        parse_mode: 'HTML',           // HTML biar link rapi
         disable_web_page_preview: true
       },
       muteHttpExceptions: true
