@@ -12,6 +12,9 @@
 
   // -------------------- CONFIG & UTILS ---------------------
   const PUBLIC_API = '/api/public';
+  // Kalau kamu call langsung Apps Script (tanpa proxy), isi window.API_KEY di HTML:
+  // <script>window.API_KEY="...";</script>
+  const API_KEY = window.API_KEY || null;
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -21,6 +24,12 @@
   const qsa = (s, r=document) => Array.from(r.querySelectorAll(s));
 
   const getParam = (k) => new URLSearchParams(location.search).get(k);
+
+  // normalisasi WA 08xxxxxxxx → 62xxxxxxxx
+  const to62 = (wa) => {
+    wa = String(wa||'').replace(/\D/g,'');
+    return /^0\d{8,15}$/.test(wa) ? ('62' + wa.slice(1)) : wa;
+  };
 
   // wait helper → nunggu PRICES siap kalau data.js load belakangan
   function waitFor(cond, cb, { timeout = 4000, every = 40 } = {}) {
@@ -327,7 +336,7 @@
         // produk
         game: selectedGame,                // ML / FF / PUBG
         game_name: conf.key,               // "Mobile Legends"
-        item_key: selectedItemKey,         // d12, d85, etc
+        item_key: selectedItemKey,         // d12, ml_86, etc
         item_label: item?.label,
         price: item?.price,
         quantity: 1,
@@ -339,9 +348,9 @@
         player_id: v('player_id'),
         server_id: v('server_id') || undefined,
 
-        // customer
-        whatsapp: v('whatsapp'),
-        customer_phone: v('whatsapp'),
+        // customer (normalisasi WA ke 62)
+        whatsapp: to62(v('whatsapp')),
+        customer_phone: to62(v('whatsapp')),
         note: v('note') || undefined,
 
         // pembayaran
@@ -350,6 +359,9 @@
         callback_url: location.origin + '/api/webhook',
         timestamp: new Date().toISOString()
       };
+
+      // inject API key kalau ada (untuk Apps Script yang require api_key)
+      if (API_KEY) payload.api_key = API_KEY;
 
       // loading state (tombol submit)
       const btn = ev.submitter || qs('#btnKirim');
@@ -429,7 +441,9 @@
         if (!lastOrderId) { alert('Order belum terbentuk. Klik "Buat Pesanan" dulu.'); return; }
 
         const buktiBase64 = await compressImageToDataURL(f, {maxW:1200,maxH:1200,quality:0.75});
-        const d2 = await postJSONAny(PUBLIC_API, { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 });
+        const body = { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 };
+        if (API_KEY) body.api_key = API_KEY; // ikutkan api_key kalau diperlukan backend
+        const d2 = await postJSONAny(PUBLIC_API, body);
         if (d2.ok) { alert('Bukti diterima. Terima kasih!'); payModal.hide(); }
         else { throw new Error(d2.error || 'Upload gagal'); }
       }catch(err){
