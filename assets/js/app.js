@@ -82,23 +82,64 @@
     });
   }
 
-  // ====== Isi pilihan game ======
+  // ====== URL/helper ======
+  const getParam = (k) => new URLSearchParams(location.search).get(k);
+
+  // Cari PRICES code dari slug GAMES (berdasarkan nama)
+  function slugToPriceCode(slugLower) {
+    if (!window.GAMES || !window.PRICES) return null;
+    const g = window.GAMES[slugLower];
+    if (!g) return null;
+    const name = (g.name || '').toLowerCase();
+    for (const code of Object.keys(PRICES)) {
+      if ((PRICES[code]?.key || '').toLowerCase() === name) return code;
+    }
+    return null;
+  }
+
+  function normalizeCode(raw) {
+    if (!raw) return null;
+    const up = String(raw).toUpperCase();
+    if (PRICES[up]) return up; // e.g. ML, FF, PUBG
+    const low = String(raw).toLowerCase();
+    const mapped = slugToPriceCode(low);
+    return mapped || up;
+  }
+
+  function syncProductHeader(code) {
+    const t  = document.getElementById('gameTitle');
+    const b  = document.getElementById('gameBanner');
+    const bc = document.getElementById('breadcrumbGame');
+    if (!window.GAMES) return;
+    // Cari by slug=code.toLowerCase() atau by name dari PRICES
+    const bySlug = window.GAMES[code?.toLowerCase()];
+    let cfg = bySlug;
+    if (!cfg && PRICES[code]) {
+      const name = (PRICES[code].key || '').toLowerCase();
+      cfg = Object.values(window.GAMES).find(g => (g.name || '').toLowerCase() === name);
+    }
+    if (!cfg) return;
+    if (t)  t.textContent = `Top Up ${cfg.name}`;
+    if (bc) bc.textContent = cfg.name;
+    if (b && cfg.banner) b.src = cfg.banner;
+  }
+
+  // ====== Isi pilihan game (select) ======
   if (gameSel) {
     const frag = document.createDocumentFragment();
-    (window.GAMES || Object.keys(PRICES)).forEach(code => {
+    Object.keys(PRICES).forEach(code => {
       const opt = document.createElement('option');
       opt.value = code;
       opt.textContent = PRICES[code].key;
       frag.appendChild(opt);
     });
-    // jaga-jaga: kalau sudah ada "-- pilih --", lanjut append
     gameSel.appendChild(frag);
   }
 
   // Badge populer (opsional di sidebar)
   const popular = document.getElementById('popularBadges');
   if (popular && gameSel) {
-    (window.GAMES || Object.keys(PRICES)).forEach(code => {
+    Object.keys(PRICES).forEach(code => {
       const a = document.createElement('a');
       a.href = '#order';
       a.className = 'badge-ghost text-decoration-none';
@@ -176,6 +217,8 @@
       }
       renderNominals(val);
       renderFields(val);
+      syncProductHeader(val);
+      localStorage.setItem('lastGame', val);
       if (orderSection) orderSection.classList.remove('d-none');
     });
   }
@@ -256,4 +299,22 @@
       btnKirim.innerHTML = prev;
     }
   });
+
+  // ====== Auto select dari URL (?game=ml / ?game=ML) atau lastGame ======
+  const urlGame  = normalizeCode(getParam('game'));
+  const lastGame = normalizeCode(localStorage.getItem('lastGame'));
+  const initCode = urlGame || lastGame;
+
+  if (initCode && PRICES[initCode]) {
+    if (gameSel) {
+      gameSel.value = initCode;
+      gameSel.dispatchEvent(new Event('change', { bubbles:true }));
+    } else {
+      // Tidak ada <select> (product page only) → render manual
+      renderNominals(initCode);
+      renderFields(initCode);
+      syncProductHeader(initCode);
+      if (orderSection) orderSection.classList.remove('d-none');
+    }
+  }
 })();
