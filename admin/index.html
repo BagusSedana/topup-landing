@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin TopUp</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{background:#0f1115;color:#e8ecf1}
+    .card{background:#151924;border:1px solid #22283a}
+    .table thead th{background:#0c1018;color:#cfd6e4;border:0}
+    .table tbody td{vertical-align:middle;border-color:#20263a}
+    .status-badge{padding:.25rem .5rem;border-radius:.5rem;font-size:.8rem}
+    .status-PENDING{background:#3a2a05;color:#f5c84b}
+    .status-DONE{background:#0f3a20;color:#55d187}
+    .status-FAILED{background:#3a0f0f;color:#ff7b7b}
+    .muted{color:#94a3b8}
+    /* login overlay */
+    #loginWrap{min-height:100vh;display:flex;align-items:center;justify-content:center}
+    #appWrap{display:none}
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="loginWrap" class="container">
+  <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+    <div class="card shadow p-4">
+      <h4 class="mb-3">Login Admin</h4>
+      <form id="loginForm">
+        <div class="mb-3">
+          <label class="form-label">ADMIN_KEY</label>
+          <input type="password" id="adminKeyInput" class="form-control" placeholder="••••••••••" required>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="rememberMe">
+          <label class="form-check-label" for="rememberMe">Remember me</label>
+        </div>
+        <button class="btn btn-primary w-100" type="submit">Masuk</button>
+      </form>
+      <div class="small mt-3 text-secondary">Tips: ADMIN_KEY berasal dari Apps Script → Script properties.</div>
+    </div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="appWrap" class="container py-3">
+  <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+    <h5 class="me-auto">Admin TopUp</h5>
+    <button id="btnLogout" class="btn btn-outline-light btn-sm">Logout</button>
+  </div>
+
+  <div class="card p-3 mb-3">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-3">
+        <label class="form-label">Status</label>
+        <select id="filterStatus" class="form-select">
+          <option value="">Semua</option>
+          <option value="PENDING">Pending</option>
+          <option value="DONE">Done</option>
+          <option value="FAILED">Failed</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-5">
+        <label class="form-label">Cari (Order/WA/Game/Item/Note)</label>
+        <input id="searchQ" class="form-control" placeholder="ketik kata kunci… lalu Enter">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label">Limit</label>
+        <select id="limit" class="form-select">
+          <option>50</option><option selected>100</option><option>200</option><option>500</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2 d-flex gap-2">
+        <button id="btnRefresh" class="btn btn-primary flex-grow-1">Refresh</button>
+        <button id="btnClear" class="btn btn-secondary">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-secondary py-2">Tips: tekan <b>R</b> buat refresh cepat</div>
+
+  <div class="card p-0">
+    <div class="table-responsive">
+      <table class="table table-dark table-hover mb-0">
+        <thead><tr>
+          <th style="width:16%">Order</th>
+          <th style="width:20%">User</th>
+          <th>Game</th>
+          <th>Nominal</th>
+          <th>Total</th>
+          <th>Bukti</th>
+          <th style="width:28%">Aksi</th>
+        </tr></thead>
+        <tbody id="tbody">
+          <tr><td colspan="7" class="text-center py-4 text-secondary">Belum ada data</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-2 small text-secondary" id="countInfo"></div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+  <div id="toast" class="toast text-bg-dark border-0" role="alert">
+    <div class="toast-body" id="toastMsg">OK</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="./admin.js"></script>
+</body>
+</html>
