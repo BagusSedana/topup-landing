@@ -29,7 +29,7 @@
     { name:'Garena Undawn', img:'https://i.imgur.com/7sp5jww.png' }
   ];
   const DAILY = [
-    { name:'E-Wallet', img:'https://i.imgur.com/pj9gG3b.png' },
+    { name:'E-Wallet', img:'https://cdn.topupgim.com/shortcut-tiles/f09f49b0-e31a-4bc1-aaef-9014df77149a.png?w=200&quot;' },
     { name:'Pulsa', img:'https://i.imgur.com/DQq0EoV.png' },
     { name:'Token PLN', img:'https://i.imgur.com/yFv3VVM.png' },
     { name:'Paket Internet', img:'https://i.imgur.com/8k3u6mP.png' },
