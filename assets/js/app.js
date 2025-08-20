@@ -32,6 +32,15 @@
     })();
   }
 
+  // util spinner singkat untuk tombol
+  function withSpinner(btn, runningText, fn) {
+    const prev = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>${runningText}`;
+    const done = () => { btn.disabled = false; btn.innerHTML = prev; };
+    return Promise.resolve().then(fn).finally(done);
+  }
+
   // --------------------- DOM REFERENCES --------------------
   const orderSection = qs('#orderSection');
   const form         = qs('#orderForm');
@@ -42,6 +51,12 @@
   const fastMode     = qs('#fastMode');
   const buktiInput   = qs('#buktiTransfer');
   const yearEl       = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  // bikin input bukti ramah mobile kamera
+  if (buktiInput) {
+    buktiInput.setAttribute('accept', 'image/*');
+    buktiInput.setAttribute('capture', 'environment');
+  }
 
   // dynamic account fields — pastikan DI DALAM form
   let dyn = qs('#dynamicFields');
@@ -93,13 +108,24 @@
   const btnOpen   = qs('#btnOpenPayApp', payModalEl);
   const btnUpload = qs('#btnUploadProof', payModalEl);
 
+  // kalau gambar QR gagal dimuat, pakai fallback lokal
+  if (payQr) {
+    payQr.addEventListener('error', () => {
+      if (!payQr.dataset.fallbacked) {
+        payQr.dataset.fallbacked = '1';
+        payQr.src = DEFAULT_QR + '?t=' + Date.now();
+        payQr.style.display = '';
+      }
+    });
+  }
+
   // -------------------- DYNAMIC FIELDS ---------------------
   const FORM_FIELDS = {
     ML: [
       { name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
       { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }
     ],
-    FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,}'}],
+    FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,'}]],
     PUBG: [{ name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,}'}],
     DEFAULT: [{ name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }]
   };
@@ -130,6 +156,7 @@
 
   // ------------------------ HTTP --------------------------
   async function postJSONAny(url, obj) {
+    // try text/plain (anti preflight)
     let resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -139,6 +166,7 @@
     let data; try { data = JSON.parse(text); } catch { data = { error: text || 'Bad JSON' }; }
     if (resp.ok && !data.error) return data;
 
+    // fallback application/json
     resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -153,20 +181,43 @@
     return data;
   }
 
+  // kompres gambar (fallback kalau createImageBitmap tidak ada)
   async function compressImageToDataURL(file, {maxW=1000, maxH=1000, quality=0.65} = {}) {
-    const bmp = await createImageBitmap(file);
-    const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(bmp.width * scale);
-    canvas.height = Math.round(bmp.height * scale);
-    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result);
-        r.readAsDataURL(blob);
-      }, 'image/jpeg', quality);
-    });
+    const drawToCanvas = (img, w, h) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result);
+          r.readAsDataURL(blob);
+        }, 'image/jpeg', quality);
+      });
+    };
+
+    try {
+      const bmp = await createImageBitmap(file);
+      const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
+      const img = document.createElement('canvas');
+      img.width = Math.round(bmp.width * scale);
+      img.height = Math.round(bmp.height * scale);
+      img.getContext('2d').drawImage(bmp, 0, 0, img.width, img.height);
+      return new Promise((resolve) => {
+        img.toBlob((blob) => {
+          const r = new FileReader();
+          r.onload = () => resolve(r.result);
+          r.readAsDataURL(blob);
+        }, 'image/jpeg', quality);
+      });
+    } catch {
+      const fr = new FileReader();
+      const src = await new Promise(res => { fr.onload = () => res(fr.result); fr.readAsDataURL(file); });
+      const im = new Image();
+      await new Promise((res, rej) => { im.onload = res; im.onerror = rej; im.src = src; });
+      const scale = Math.min(1, maxW / im.naturalWidth, maxH / im.naturalHeight);
+      return drawToCanvas(im, Math.round(im.naturalWidth*scale), Math.round(im.naturalHeight*scale));
+    }
   }
 
   // --------------------- PAYMENT MAPPER --------------------
@@ -360,12 +411,9 @@
       if (API_KEY) payload.api_key = API_KEY;
 
       const btn = ev.submitter || qs('#btnKirim');
-      const prev = btn ? btn.innerHTML : null;
-      if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Membuat pesanan…'; }
 
-      try {
+      await withSpinner(btn, 'Membuat pesanan…', async () => {
         const d1 = await postJSONAny(PUBLIC_API, payload);
-
         if (!d1 || (!d1.ok && !d1.order_id)) throw new Error(d1?.message || d1?.error || 'Create order gagal');
 
         lastOrderId = d1.order_id || d1.id || null;
@@ -399,8 +447,7 @@
         }
 
         payModal.show();
-
-      } catch (err) {
+      }).catch(err => {
         console.error(err);
         let box = qs('#orderErrorMsg');
         if (!box) {
@@ -411,9 +458,7 @@
         }
         box.textContent = 'Gagal membuat pesanan: ' + (err.message || err);
         box.scrollIntoView({behavior:'smooth', block:'center'});
-      } finally {
-        if (btn && prev) { btn.disabled = false; btn.innerHTML = prev; }
-      }
+      });
     });
 
     btnCopy?.addEventListener('click', async () => {
@@ -428,24 +473,44 @@
       if (lastPayInfo?.deeplink) window.open(lastPayInfo.deeplink, '_blank', 'noopener');
     });
 
-    btnUpload?.addEventListener('click', async () => {
-      try{
-        const f = buktiInput?.files?.[0];
-        if (!f) { alert('Pilih bukti transfer dulu ya 🙏'); return; }
-        if (!/^image\//.test(f.type)) { alert('File harus gambar'); return; }
-        if (f.size > 10*1024*1024) { alert('Maksimal 10MB'); return; }
-        if (!lastOrderId) { alert('Order belum terbentuk. Klik "Buat Pesanan" dulu.'); return; }
+    // ==== Upload Bukti dengan auto file picker ====
+    async function doUpload(file) {
+      if (!/^image\//.test(file.type)) { alert('File harus gambar'); return; }
+      if (file.size > 10*1024*1024)   { alert('Maksimal 10MB');     return; }
+      if (!lastOrderId)               { alert('Order belum terbentuk. Klik "Buat Pesanan" dulu.'); return; }
 
-        const buktiBase64 = await compressImageToDataURL(f, {maxW:1000,maxH:1000,quality:0.65});
-        const body = { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 };
-        if (API_KEY) body.api_key = API_KEY;
-        const d2 = await postJSONAny(PUBLIC_API, body);
-        if (d2.ok) { alert('Bukti diterima. Terima kasih!'); payModal.hide(); }
-        else { throw new Error(d2.error || 'Upload gagal'); }
-      }catch(err){
-        console.error(err);
-        alert('Upload bukti gagal. ' + (err.message||err));
+      const buktiBase64 = await compressImageToDataURL(file, {maxW:1000,maxH:1000,quality:0.65});
+      const body = { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 };
+      if (API_KEY) body.api_key = API_KEY;
+
+      const d2 = await postJSONAny(PUBLIC_API, body);
+      if (d2.ok) {
+        alert('Bukti diterima. Terima kasih!');
+        payModal.hide();
+        if (buktiInput) buktiInput.value = ''; // reset
+      } else {
+        throw new Error(d2.error || 'Upload gagal');
       }
+    }
+
+    btnUpload?.addEventListener('click', async () => {
+      if (!buktiInput) { alert('Input bukti tidak ditemukan.'); return; }
+
+      // belum ada file → buka picker dan auto-upload setelah dipilih
+      if (!buktiInput.files?.length) {
+        buktiInput.click();
+        const onPick = () => {
+          buktiInput.removeEventListener('change', onPick);
+          const f = buktiInput.files?.[0];
+          if (f) withSpinner(btnUpload, 'Mengunggah…', () => doUpload(f));
+        };
+        buktiInput.addEventListener('change', onPick, { once: true });
+        return;
+      }
+
+      // sudah ada file → langsung upload
+      const f = buktiInput.files[0];
+      await withSpinner(btnUpload, 'Mengunggah…', () => doUpload(f));
     });
   }
 
