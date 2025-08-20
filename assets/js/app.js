@@ -54,13 +54,10 @@
   const yearEl       = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   // --- Fix gutter kiri pada grid nominal ---
+  // --- Fix gutter kiri pada grid nominal ---
   if (nominalGrid) {
-    // jadikan kontainer grid sebagai .row agar padding kolom ditarik ke luar
-    nominalGrid.classList.add('row', 'g-3');
-  
-    // kalau parent-nya .card-body punya padding default, nolkan padding kiri/kanan
-    const body = nominalGrid.closest('.card-body');
-    if (body) body.classList.add('px-0');
+    // tetap jadikan grid sebagai row dgn gutter 3
+    nominalGrid.classList.add('row', 'gx-3', 'gy-3', 'nominal-row');
   }
 
   // bikin input bukti ramah mobile kamera
