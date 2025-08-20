@@ -14,72 +14,7 @@ window.GAMES = {
       'Server ID adalah 4 digit di belakang tanda (.). Contoh 12345678 (1234).',
       'Pilih nominal diamonds, isi WA yang aktif, lalu bayar via QRIS.'
     ],
-    detailsHtml: `
-<div class="stack-16">
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h2 class="h5 mb-2">Top Up Mobile Legends (ML)</h2>
-    <p><em>Delivery:</em> Instan • <em>Provider:</em> Moonton</p>
-    <p>Beli Diamonds Mobile Legends lebih murah pakai kode promo, hemat hingga 39%. Top Up ML murah dan proses instan di TopUpGim, beli Weekly Diamond Pass hanya Rp26.900 dan top up 113 Diamonds hanya Rp30.600.</p>
-    <h3 class="h6 mt-3">Kenapa Top Up ML di TopUpGim.com?</h3>
-    <ul class="mb-0">
-      <li><b>Lebih Murah.</b> Hemat hingga 39% &amp; tanpa biaya admin.</li>
-      <li><b>Mudah &amp; Otomatis.</b> Tidak perlu kirim bukti pembayaran.</li>
-      <li><b>Proses Instan.</b> Pengiriman hanya hitungan detik.</li>
-    </ul>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Mobile Legends</h3>
-    <p>Mobile Legends (ML) adalah permainan MOBA populer. Dua tim 5v5 bertarung menghancurkan base lawan dengan koordinasi dan strategi.</p>
-    <ul class="mb-0">
-      <li><b>Heroes:</b> Tank, Fighter, Assassin, Mage, Marksman, Support.</li>
-      <li><b>Gameplay:</b> ~10–15 menit / match.</li>
-      <li><b>Map:</b> Tiga lane + turret.</li>
-      <li><b>Ranked:</b> Mode kompetitif untuk push rank.</li>
-      <li><b>Skins:</b> Kostum & efek visual.</li>
-    </ul>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Diamond Mobile Legends (ML)</h3>
-    <p>Diamond adalah mata uang premium untuk beli skins, heroes, bundles, emote, hingga Starlight Membership.</p>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Cara Top Up Diamond Mobile Legends Termurah</h3>
-    <ol class="mb-0">
-      <li>Buka halaman <b>Top Up Mobile Legends</b> di TopUpGim.</li>
-      <li>Masukkan <b>Player ID</b> dan <b>Server ID</b> (4 digit di belakang titik).</li>
-      <li>Pilih nominal diamond.</li>
-      <li>Pilih metode pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li>
-      <li>Lakukan pembayaran dan tunggu beberapa detik.</li>
-      <li>Diamond otomatis masuk ke akun.</li>
-    </ol>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Metode Pembayaran</h3>
-    <ul class="mb-0">
-      <li>Transfer Bank</li>
-      <li>E‑wallet (GoPay, OVO, DANA, LinkAja)</li>
-      <li>Kartu Kredit/Debit</li>
-      <li>Pulsa</li>
-      <li>Minimarket</li>
-      <li>QRIS</li>
-    </ul>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Rekomendasi Top Up Game Lain</h3>
-    <p>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p>
-    <p class="mb-0">TopUpGim cepat, murah, praktis—langsung dari HP.</p>
-  </div></section>
-</div>
-`
+    detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Mobile Legends (ML)</h2><p><em>Delivery:</em> Instan • <em>Provider:</em> Moonton</p><p><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin. WDP mulai Rp26.900, 113 Diamonds mulai Rp30.600.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Kenapa TopUp di TopUpGim?</h3><ul class='mb-0'><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — metode lokal & QRIS.</li><li><b>Instan</b> — masuk dalam hitungan detik.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Tentang Game</h3><p>MOBA 5v5 dengan ratusan hero. Cocok buat push rank bareng tim.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Cara Top Up</h3><ol class='mb-0'><li>Masukkan <b>Player ID</b> & <b>Server ID</b>.</li><li>Pilih nominal diamonds.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Metode Pembayaran</h3><p>QRIS, GoPay, OVO, DANA, LinkAja, Transfer Bank, Kartu, Minimarket, Pulsa.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Rekomendasi Lain</h3><p>FF, PUBG, CODM, HOK, Genshin, HSR, Valorant, Robux, Steam, Google Play.</p></div></section></div>`
   },
   ff: {
     key: 'ff',
@@ -94,17 +29,7 @@ window.GAMES = {
       'Pilih jumlah Diamonds.',
       'Bayar via QRIS/e‑wallet—instan.'
     ],
-    detailsHtml: `
-<div class="stack-16">
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
-  </div></section>
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h2 class="h5 mb-2">Top Up Free Fire (FF)</h2>
-    <p>Diamond FF murah, proses instan, tanpa biaya admin. Masukkan Player ID, pilih nominal, bayar via QRIS/e‑wallet—item langsung masuk.</p>
-  </div></section>
-</div>
-`
+    detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Free Fire (FF)</h2><p><b>Diamonds FF</b> murah & langsung masuk. Tanpa biaya admin. Aman via QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Cara Top Up</h3><ol class='mb-0'><li>Masukkan <b>Player ID</b>.</li><li>Pilih nominal.</li><li>Bayar & tunggu item terkirim.</li></ol></div></section></div>`
   },
   pubg: {
     key: 'pubg',
@@ -119,16 +44,6 @@ window.GAMES = {
       'Pilih jumlah UC.',
       'Bayar via QRIS—saldo otomatis masuk.'
     ],
-    detailsHtml: `
-<div class="stack-16">
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
-  </div></section>
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h2 class="h5 mb-2">Top Up PUBG Mobile</h2>
-    <p>Beli UC PUBG Mobile cepat & aman. Isi UID, pilih nominal UC, bayar, saldo otomatis terkirim.</p>
-  </div></section>
-</div>
-`
+    detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up PUBG Mobile (UC)</h2><p>Beli <b>UC</b> cepat, aman, & resmi. Auto masuk setelah pembayaran.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6'>Cara Top Up</h3><ol class='mb-0'><li>Masukkan <b>UID</b>.</li><li>Pilih nominal UC.</li><li>Bayar via QRIS/e‑wallet/bank.</li></ol></div></section></div>`
   }
 };

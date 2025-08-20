@@ -95,7 +95,7 @@
           <div class="modal-footer d-flex flex-wrap gap-2">
             <button id="btnOpenPayApp" class="btn btn-primary flex-grow-1 d-none" type="button">Buka Aplikasi</button>
             <button id="btnCopyCode"   class="btn btn-outline-secondary flex-grow-1 d-none" type="button">Salin Kode</button>
-            <button id="btnUploadProof" class="btn btn-success flex-grow-1" type="button">Upload Bukti</button>
+            <button id="btnUploadProof" class="btn btn-primary flex-grow-1" type="button">Upload Bukti</button>
           </div>
         </div>
       </div>`;

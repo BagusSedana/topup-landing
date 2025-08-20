@@ -4,22 +4,22 @@
   const input = el('#search');
 
   // Source data — gabungan ringkas
+  
   const ITEMS = [
     // Games (link ke product.html)
     { type:'Game', slug:'ml',   name:'Mobile Legends',  img:'https://i.imgur.com/3zQnXwq.png', href:'/product.html?game=ml' },
     { type:'Game', slug:'ff',   name:'Free Fire',       img:'https://i.imgur.com/2fVtQcx.png', href:'/product.html?game=ff' },
     { type:'Game', slug:'pubg', name:'PUBG Mobile',     img:'https://i.imgur.com/rgYt9FQ.png', href:'/product.html?game=pubg' },
-    // E‑wallet
-    { type:'E‑wallet', name:'GoPay',    img:'https://i.imgur.com/EQG6l8V.png' },
-    { type:'E‑wallet', name:'OVO',      img:'https://i.imgur.com/aWQj6zV.png' },
-    { type:'E‑wallet', name:'DANA',     img:'https://i.imgur.com/6bqQbHi.png' },
-    // Pulsa/Data
-    { type:'Pulsa', name:'Telkomsel', img:'https://i.imgur.com/2lj2tmy.png' },
-    { type:'Pulsa', name:'Indosat',   img:'https://i.imgur.com/0eG9KQ0.png' },
-    // Apps/Voucher
-    { type:'Aplikasi', name:'Google Play', img:'https://i.imgur.com/pj9gG3b.png' },
-    { type:'Aplikasi', name:'Steam Wallet', img:'https://i.imgur.com/3h3sVvD.png' }
+    { type:'Game', slug:'codm', name:'Call of Duty: Mobile', img:'https://i.imgur.com/E6oY8kF.png', href:'/product.html?game=codm' },
+    { type:'Game', slug:'hok',  name:'Honor of Kings',  img:'https://i.imgur.com/Pk8g7lq.png', href:'/product.html?game=hok' },
+    { type:'Game', slug:'gi',   name:'Genshin Impact',  img:'https://i.imgur.com/HDs1Y7n.png', href:'/product.html?game=gi' },
+    { type:'Game', slug:'hsr',  name:'Honkai: Star Rail', img:'https://i.imgur.com/UR6ZfGf.png', href:'/product.html?game=hsr' },
+    { type:'Game', slug:'valo', name:'VALORANT (Voucher)', img:'https://i.imgur.com/k2kB2zk.png', href:'/product.html?game=valorant' },
+    { type:'Game', slug:'roblox', name:'Roblox Robux',  img:'https://i.imgur.com/s2aWj9j.png', href:'/product.html?game=roblox' },
+    { type:'Voucher', slug:'steam', name:'Steam Wallet', img:'https://i.imgur.com/3h3sVvD.png', href:'/product.html?game=steam' },
+    { type:'Voucher', slug:'google', name:'Google Play', img:'https://i.imgur.com/pj9gG3b.png', href:'/product.html?game=google' }
   ];
+
 
   function card(item){
     const disabled = item.href ? '' : 'disabled';
