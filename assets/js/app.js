@@ -388,7 +388,7 @@
       col.className = 'col-6 col-md-4';
       const id = `opt_${key}`;
       col.innerHTML = `
-      <label class="form-check w-100 ps-0">
+      <label class="form-check w-100 ps-10">
         <input class="form-check-input d-none" type="radio" name="nominal" id="${id}" value="${key}">
         <div class="option">
           <div class="fw-semibold small">${items[key].label}</div>
