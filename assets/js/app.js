@@ -1,14 +1,14 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // =========================================================
-  //  TopUpGim - Product Page Logic (rapihin kartu nominal + auto-update ringkasan)
+  //  TopUpGim - Product Page Logic (nominal grid + confirm card)
   // =========================================================
 
   // -------------------- CONFIG & UTILS ---------------------
   const PUBLIC_API = '/api/public';
-  const API_KEY = window.API_KEY || null; // kalau call langsung Apps Script
-  const DEFAULT_QR = '/assets/img/qris.jpg'; // fallback QR lokal
-  const DISCOUNT_RATE = 0; // contoh diskon global (0.03 = 3%). Biarkan 0 jika tidak ada.
+  const API_KEY = window.API_KEY || null;
+  const DEFAULT_QR = '/assets/img/qris.jpg';
+  const DISCOUNT_RATE = 0;
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -49,62 +49,55 @@
   const nominalGrid  = qs('#nominalGrid');
   const nominalError = qs('#nominalError');
   const totalPriceEl = qs('#totalPrice');
-  const fastMode     = qs('#fastMode'); // kalau tidak ada di HTML, otomatis abaikan
+  const fastMode     = qs('#fastMode');
   const buktiInput   = qs('#buktiTransfer');
   const yearEl       = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ---------- Inject CSS agar label TIDAK terpotong & layout lebih rapi ----------
+  // ---------- Inline CSS agar label/harga TIDAK membungkus ----------
   (function ensureInlineStyles(){
     if (document.getElementById('product-inline-css')) return;
     const style = document.createElement('style');
     style.id = 'product-inline-css';
     style.textContent = `
-      /* ratakan grid ke tepi card-body */
+      /* grid nominal nempel ke tepi card-body */
       #nominalGrid.nominal-row{
         margin-left:calc(-1 * var(--bs-card-spacer-x,1rem));
         margin-right:calc(-1 * var(--bs-card-spacer-x,1rem));
       }
-      #nominalGrid.nominal-row>[class^="col-"],#nominalGrid.nominal-row>[class*=" col-"]{
+      #nominalGrid.nominal-row > [class^="col-"],
+      #nominalGrid.nominal-row > [class*=" col-"]{
         padding-left:var(--bs-card-spacer-x,1rem);
         padding-right:var(--bs-card-spacer-x,1rem);
       }
       #nominalGrid .skeleton{width:100%}
 
-      /* kartu nominal: wrap text, ada icon, tinggi konsisten */
-      #nominalGrid .option{
-        border:1.5px solid #e5e7eb;
-        border-radius:.875rem;
-        background:#fff;
-        padding:.8rem .95rem;
-        min-height:86px;
-        display:flex;
-        gap:.75rem;
-        align-items:flex-start;
-        transition:border-color .15s, box-shadow .15s, transform .12s;
-      }
-      #nominalGrid .ico{
-        flex:0 0 28px; height:28px; width:28px;
-        display:grid; place-items:center;
-        border-radius:999px;
-        background:#eef6ff;
-        font-size:14px; line-height:1;
-      }
-      #nominalGrid .meta{min-width:0;display:flex;flex-direction:column;gap:2px}
-      #nominalGrid .label{
-        font-weight:600; font-size:.95rem; line-height:1.15; color:#0f172a;
-        white-space:normal; overflow:visible; text-overflow:clip;  /* <= tampilkan teks penuh */
-      }
-      #nominalGrid .price{
-        font-weight:700; font-size:1rem; line-height:1.2; color:#0f172a;
-      }
+      /* kartu nominal */
       #nominalGrid .form-check-input{display:none}
-      #nominalGrid .form-check-input:checked + .option{
-        border-color:#16a34a; box-shadow:0 0 0 .22rem rgba(22,163,74,.15);
+      #nominalGrid .option{
+        border:1.5px solid #e5e7eb;border-radius:.875rem;
+        padding:.8rem .95rem;background:#fff;min-height:74px;
+        display:flex;flex-direction:column;justify-content:center;gap:4px;
+        transition:border-color .15s,box-shadow .15s,transform .12s;
       }
+      /* anti-wrap: JANGAN pecah per huruf/angka */
+      #nominalGrid .option .label,
+      #nominalGrid .option .price{
+        white-space:nowrap !important;
+        word-break:keep-all !important;
+        overflow-wrap:normal !important;
+        overflow:hidden;text-overflow:ellipsis;
+      }
+      #nominalGrid .option .label{display:flex;align-items:center;gap:.35rem;font-weight:600;font-size:.95rem;line-height:1.15;color:#0f172a}
+      #nominalGrid .option .label .txt{min-width:0}
+      #nominalGrid .option .price{font-weight:700;font-size:1rem;line-height:1.2;color:#0f172a}
+      #nominalGrid .form-check-input:checked + .option{border-color:#16a34a;box-shadow:0 0 0 .22rem rgba(22,163,74,.15)}
       #nominalGrid .form-check-input:checked + .option .price{color:#16a34a}
     `;
     document.head.appendChild(style);
   })();
+
+  // --- jadikan grid sebagai row dgn gutter ---
+  if (nominalGrid) nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
 
   // bikin input bukti ramah mobile kamera
   if (buktiInput) {
@@ -197,7 +190,7 @@
     `).join('');
   }
 
-  // WA wajib (kalau input tidak ada ya di-skip)
+  //WA wajib (abaikan jika input tidak ada di form)
   const waInput = form?.['whatsapp'];
   if (waInput) {
     waInput.required = true;
@@ -207,15 +200,13 @@
     });
   }
 
-  // ------------------------ UI PATCH (Konfirmasi Pembelian) -------------
+  // ------------------------ UI PATCH (hapus Periksa/Tutorial + tambah Konfirmasi) -------------
   function setupConfirmationCard() {
-    // hapus tombol "Periksa/Tutorial" kalau ada
     qsa('button, a').forEach(el => {
       const t = (el.textContent||'').trim().toLowerCase();
       if (t === 'periksa' || t === 'tutorial') el.remove();
     });
 
-    // buat card ringkasan jika belum ada
     let confirmCard = qs('#confirmCard');
     if (!confirmCard) {
       confirmCard = document.createElement('div');
@@ -257,12 +248,11 @@
               </div>
             </div>
           </div>
-          <div class="mt-3"><!-- tombol submit lama akan dipindah ke sini --></div>
+          <div class="mt-3"></div>
         </div>`;
       (orderSection || document.body).appendChild(confirmCard);
     }
 
-    // pindahkan tombol submit lama ke dalam confirmCard
     const submitOld = form?.querySelector('button[type="submit"]');
     if (submitOld && !confirmCard.contains(submitOld)) {
       const holder = confirmCard.querySelector('.mt-3');
@@ -273,12 +263,11 @@
     }
   }
 
-  // refs ringkasan (akan diambil ulang setiap kali hitung total)
+  // refs ringkasan
   let sumItem, sumPrice, sumAdmin, sumDisc, sumTotal;
 
   // ------------------------ HTTP --------------------------
   async function postJSONAny(url, obj) {
-    // coba text/plain (anti preflight)
     let resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -288,7 +277,6 @@
     let data; try { data = JSON.parse(text); } catch { data = { error: text || 'Bad JSON' }; }
     if (resp.ok && !data.error) return data;
 
-    // fallback application/json
     resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -303,7 +291,7 @@
     return data;
   }
 
-  // kompres gambar bukti
+  // kompres gambar
   async function compressImageToDataURL(file, {maxW=1000, maxH=1000, quality=0.65} = {}) {
     const drawToCanvas = (img, w, h) => {
       const canvas = document.createElement('canvas');
@@ -317,6 +305,7 @@
         }, 'image/jpeg', quality);
       });
     };
+
     try {
       const bmp = await createImageBitmap(file);
       const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
@@ -356,84 +345,38 @@
   const buildQrImgUrlFromString = (s) =>
     `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(s)}`;
 
-  // ---------------------- GAME MAPPING --------------------
-  const sanitize = (s='') => String(s).toLowerCase().replace(/[^a-z0-9]+/g,'');
-  function findPriceCode(inputRaw) {
-    if (!window.PRICES || !inputRaw) return null;
-    const up = String(inputRaw).toUpperCase();
-    const low = String(inputRaw).toLowerCase();
-    const norm = sanitize(inputRaw);
-
-    if (PRICES[up]) return up;
-    for (const code of Object.keys(PRICES)) {
-      const slug = PRICES[code]?.slug;
-      if (slug && String(slug).toLowerCase() === low) return code;
-    }
-    for (const code of Object.keys(PRICES)) {
-      if (sanitize(PRICES[code]?.key) === norm) return code;
-    }
-    if (window.GAMES) {
-      const g = GAMES[low];
-      if (g) {
-        const gname = sanitize(g.name);
-        for (const code of Object.keys(PRICES)) {
-          if (sanitize(PRICES[code]?.key) === gname) return code;
-        }
-      }
-    }
-    return null;
-  }
-
-  function syncProductHeader(code) {
-    const t  = qs('#gameTitle');
-    const b  = qs('#gameBanner');
-    const bc = qs('#breadcrumbGame');
-
-    let name=null, banner=null;
-    if (window.GAMES) {
-      const g = GAMES[code?.toLowerCase()];
-      if (g) { name = g.name; banner = g.banner || g.cover || null; }
-    }
-    if (!name && window.PRICES && PRICES[code]) name = PRICES[code].key;
-
-    if (t && name)  t.textContent = `Top Up ${name}`;
-    if (bc && name) bc.textContent = name;
-    if (b && banner) b.src = banner;
-  }
-
   // ------------------ NOMINAL & TOTAL ---------------------
   let selectedGame = null;
   let selectedItemKey = null;
+  let selectedPrice = 0;
+  let currentFastFee = 0;
   let lastOrderId = null;
   let lastPayInfo = null;
-  let autoScrolled = false;
 
-  // render pilihan nominal (label selalu penuh)
   function renderNominals(code) {
     const conf = PRICES[code];
     if (!conf) return;
 
     selectedGame = code;
     selectedItemKey = null;
+    selectedPrice = 0;
+    currentFastFee = conf.fastFee || 0;
     nominalGrid.innerHTML = '';
-    nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
     nominalError?.classList.add('d-none');
 
     const items = conf.items || {};
     Object.keys(items).forEach((key) => {
+      const { label, price } = items[key];
       const col = document.createElement('div');
-      col.className = 'col-6 col-md-4';
+      // 2 kolom di sm, 3 kolom di md+
+      col.className = 'col-12 col-sm-6 col-md-4';
       const id = `opt_${key}`;
-      const lbl = items[key].label || key;
       col.innerHTML = `
-        <label class="form-check w-100">
+        <label class="form-check w-100" title="${label} — ${rupiah(price)}">
           <input class="form-check-input" type="radio" name="nominal" id="${id}" value="${key}">
           <div class="option">
-            <div class="ico">💎</div>
-            <div class="meta">
-              <div class="label">${lbl}</div>
-              <div class="price">${rupiah(items[key].price)}</div>
-            </div>
+            <div class="label"><span>💎</span><span class="txt">${label}</span></div>
+            <div class="price">${rupiah(price)}</div>
           </div>
         </label>`;
       nominalGrid.appendChild(col);
@@ -442,13 +385,8 @@
     qsa('input[name="nominal"]', nominalGrid).forEach(inp => {
       inp.addEventListener('change', () => {
         selectedItemKey = inp.value;
-        calcTotal();                       // langsung sinkron ke Ringkasan
-        // tarik ke bawah (sekali aja biar ga ganggu)
-        if (!autoScrolled) {
-          const card = qs('#confirmCard');
-          if (card) { card.scrollIntoView({ behavior:'smooth', block:'start' }); }
-          autoScrolled = true;
-        }
+        selectedPrice = PRICES[code].items[selectedItemKey].price;
+        calcTotal();
       });
     });
 
@@ -466,7 +404,6 @@
 
     if (totalPriceEl) totalPriceEl.textContent = rupiah(total);
 
-    // refresh refs ringkasan
     sumItem  = qs('#sumItem'); sumPrice = qs('#sumPrice');
     sumAdmin = qs('#sumAdmin'); sumDisc  = qs('#sumDisc'); sumTotal = qs('#sumTotal');
 
@@ -482,10 +419,9 @@
   function showNominalSkeleton() {
     if (!nominalGrid) return;
     nominalGrid.innerHTML = '';
-    nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
     for (let i=0;i<6;i++){
       const col = document.createElement('div');
-      col.className = 'col-6 col-md-4';
+      col.className = 'col-12 col-sm-6 col-md-4';
       col.innerHTML = '<div class="skeleton"></div>';
       nominalGrid.appendChild(col);
     }
@@ -522,12 +458,11 @@
         const val = e.target.value;
         if (!val) {
           nominalGrid.innerHTML = '';
-          totalPriceEl && (totalPriceEl.textContent = rupiah(0));
+          totalPriceEl.textContent = rupiah(0);
           orderSection?.classList.add('d-none');
           dyn.innerHTML = '';
           return;
         }
-        autoScrolled = false;
         renderNominals(val);
         renderFields(val);
         syncProductHeader(val);
@@ -598,7 +533,6 @@
         payTotal.textContent = 'Total: ' + rupiah(totalPay);
         payInfo.textContent  = lastPayInfo.expires ? ('Bayar sebelum: ' + new Date(lastPayInfo.expires).toLocaleString('id-ID')) : 'Scan untuk bayar';
 
-        // --- QR image (qr_url → qr_string → fallback lokal) + cache-busting
         let qrImg = lastPayInfo.qrUrl
           || (lastPayInfo.qrString ? buildQrImgUrlFromString(lastPayInfo.qrString) : null)
           || DEFAULT_QR;
@@ -662,7 +596,7 @@
       if (d2.ok) {
         alert('Bukti diterima. Terima kasih!');
         payModal.hide();
-        if (buktiInput) buktiInput.value = ''; // reset
+        if (buktiInput) buktiInput.value = '';
       } else {
         throw new Error(d2.error || 'Upload gagal');
       }
@@ -670,6 +604,7 @@
 
     btnUpload?.addEventListener('click', async () => {
       if (!buktiInput) { alert('Input bukti tidak ditemukan.'); return; }
+
       if (!buktiInput.files?.length) {
         buktiInput.click();
         const onPick = () => {
@@ -680,6 +615,7 @@
         buktiInput.addEventListener('change', onPick, { once: true });
         return;
       }
+
       const f = buktiInput.files[0];
       await withSpinner(btnUpload, 'Mengunggah…', () => doUpload(f));
     });
@@ -688,7 +624,7 @@
   // ------------------------ BOOT ---------------------------
   async function boot(){
     showNominalSkeleton();
-    await loadPricesFromBackend(); // override PRICES dari backend kalau ada
+    await loadPricesFromBackend();
 
     if (gameSel && window.PRICES) {
       const frag = document.createDocumentFragment();
@@ -703,7 +639,7 @@
     }
 
     wireListeners();
-    setupConfirmationCard(); // pastikan card ada
+    setupConfirmationCard();
 
     const paramGame = getParam('game');
     const lastGame  = localStorage.getItem('lastGame');
@@ -727,6 +663,5 @@
     }
   }
 
-  // start setelah PRICES siap (data.js), tapi boot akan override dari backend
   waitFor(() => typeof window.PRICES !== 'undefined', () => { boot(); });
 })();
