@@ -388,13 +388,13 @@
       col.className = 'col-6 col-md-4';
       const id = `opt_${key}`;
       col.innerHTML = `
-        <label class="form-check w-100">
-          <input class="form-check-input" type="radio" name="nominal" id="${id}" value="${key}">
-          <div class="option">
-            <div class="fw-semibold small">${items[key].label}</div>
-            <div class="small text-muted">${rupiah(items[key].price)}</div>
-          </div>
-        </label>`;
+      <label class="form-check w-100 ps-0">
+        <input class="form-check-input d-none" type="radio" name="nominal" id="${id}" value="${key}">
+        <div class="option">
+          <div class="fw-semibold small">${items[key].label}</div>
+          <div class="small text-muted">${rupiah(items[key].price)}</div>
+        </div>
+      </label>`;
       nominalGrid.appendChild(col);
     });
 
