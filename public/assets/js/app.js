@@ -191,13 +191,31 @@
     if (window.GAMES) { const g = GAMES[code?.toLowerCase()]; if (g) { name = g.name; banner = g.banner || g.cover || null; } }
     if (!name && window.PRICES && PRICES[code]) name = PRICES[code].key;
     if (t && name)  t.textContent = `Top Up ${name}`;
+    renderGameContent(code);
     if (b) { b.src = banner || FALLBACK_BANNER; b.onerror = () => { if (b.src !== FALLBACK_BANNER) b.src = FALLBACK_BANNER; }; }
   }
 
   // ===== Nominal & Total
   let selectedGame = null, selectedItemKey = null, lastOrderId = null, lastPayInfo = null;
 
-  function renderNominals(code) {
+  
+  function renderGameContent(code) {
+    const el = document.getElementById('gameContent');
+    if (!el) return;
+    let html = '';
+    try {
+      const g = (window.GAMES && (window.GAMES[code] || window.GAMES[code.toLowerCase()])) || null;
+      html = g && g.detailsHtml ? g.detailsHtml : '';
+    } catch (e) { html = ''; }
+    if (!html) {
+      html = '<div class="card border-0 shadow-sm rounded-4"><div class="card-body">'+
+             '<div class="fw-semibold mb-2">Tentang Produk</div>'+
+             '<p>Top up cepat, resmi, dan hemat di TopUpGim. Masukkan ID akun lalu pilih nominal.</p>'+
+             '</div></div>';
+    }
+    el.innerHTML = html;
+  }
+function renderNominals(code) {
     const conf = PRICES[code]; if (!conf) return;
     selectedGame = code; selectedItemKey = null;
     nominalGrid.innerHTML = ''; nominalError?.classList.add('d-none');
@@ -434,3 +452,6 @@
 
   waitFor(() => typeof window.PRICES !== 'undefined', () => { boot(); });
 })();
+
+// set footer year
+try{var y=document.getElementById('y'); if(y) y.textContent=new Date().getFullYear();}catch{}

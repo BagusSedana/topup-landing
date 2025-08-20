@@ -15,7 +15,8 @@ window.GAMES = {
       'Server ID adalah 4 digit di belakang tanda (.). Contoh 12345678 (1234).',
       'Pilih nominal diamonds, isi WA yang aktif, lalu bayar via QRIS.',
       'Tunggu ±1–3 menit. Kami proses otomatis lewat akun agent resmi.'
-    ]
+    ],
+    detailsHtml: "\n<h2 class=\"h4 mt-4 mb-2\">Top Up Mobile Legends (ML)</h2>\n<p><em>Delivery:</em> Instan \u2022 <em>Provider:</em> Moonton</p>\n<p>Beli Diamonds Mobile Legends lebih murah pakai kode promo, hemat hingga 39%. Top Up ML murah dan proses instan di TopUpGim, beli Weekly Diamond Pass hanya Rp26.900 dan top up 113 Diamonds hanya Rp30.600.</p>\n\n<h3 class=\"h5 mt-4\">Kenapa Top Up ML di TopUpGim.com?</h3>\n<ul>\n  <li><strong>Lebih Murah.</strong> Hemat hingga 39% &amp; tanpa biaya admin.</li>\n  <li><strong>Mudah &amp; Otomatis.</strong> Tidak perlu kirim bukti pembayaran.</li>\n  <li><strong>Proses Instan.</strong> Pengiriman hanya hitungan detik.</li>\n</ul>\n\n<h3 class=\"h5 mt-4\">Mobile Legends</h3>\n<p>Mobile Legends (ML) adalah permainan MOBA (Multiplayer Online Battle Arena) yang dikembangkan oleh Moonton dan dirilis pada tahun 2016 untuk perangkat Android dan iOS. Dua tim, masing\u2011masing lima pemain, bertarung untuk menghancurkan base lawan sambil mempertahankan base sendiri. Setiap pemain mengendalikan <em>hero</em> dengan kemampuan unik\u2014kerja sama tim, strategi, dan mechanical skill jadi kunci kemenangan.</p>\n<ul>\n  <li><strong>Heroes:</strong> Tank, Fighter, Assassin, Mage, Marksman, Support.</li>\n  <li><strong>Gameplay:</strong> Match ~10\u201315 menit, tujuan utama menghancurkan base.</li>\n  <li><strong>Map:</strong> Tiga lane (top/mid/bot) dengan turret penjaga.</li>\n  <li><strong>Ranked:</strong> Mode kompetitif untuk push rank.</li>\n  <li><strong>Skins:</strong> Kostum &amp; efek visual unik untuk hero.</li>\n</ul>\n\n<h3 class=\"h5 mt-4\">Diamond Mobile Legends (ML)</h3>\n<p>Diamond adalah mata uang premium untuk membeli item eksklusif seperti skins, heroes, bundles, emote, hingga Starlight Membership.</p>\n\n<h3 class=\"h5 mt-4\">Cara Top Up Diamond Mobile Legends Termurah</h3>\n<ol>\n  <li>Kunjungi situs TopUpGim, buka halaman <strong>Top Up Mobile Legends</strong>.</li>\n  <li>Masukkan <strong>Player ID</strong> dan <strong>Server ID</strong> (4 digit di belakang tanda titik).</li>\n  <li>Pilih nominal diamond yang diinginkan.</li>\n  <li>Pilih metode pembayaran (QRIS, e\u2011wallet, bank, kartu, minimarket, pulsa).</li>\n  <li>Lakukan pembayaran dan tunggu beberapa detik.</li>\n  <li>Diamond akan otomatis masuk ke akun kamu.</li>\n</ol>\n\n<h3 class=\"h5 mt-4\">Metode Pembayaran</h3>\n<ul>\n  <li>Transfer Bank</li>\n  <li>E\u2011wallet (GoPay, OVO, DANA, LinkAja)</li>\n  <li>Kartu Kredit/Debit</li>\n  <li>Pulsa</li>\n  <li>Minimarket</li>\n  <li>QRIS</li>\n</ul>\n\n<h3 class=\"h5 mt-4\">Rekomendasi Top Up Game Lain</h3>\n<p>Kamu juga bisa top up Free Fire, PUBG Mobile, Call of Duty Mobile, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, hingga Honkai: Star Rail di TopUpGim.</p>\n\n<p class=\"mt-4\">Sekarang, top up diamond Mobile Legends tidak perlu mahal. Dengan TopUpGim, kamu bisa beli diamond ML dengan cepat, mudah, dan praktis\u2014langsung dari HP.</p>\n"
   },
 
   ff: {
@@ -31,7 +32,8 @@ window.GAMES = {
       'Pilih nominal diamond / membership sesuai kebutuhan.',
       'Isi WA aktif dan bayar. Proses instan, masuk lewat ID.',
       'Orderan selesai, resi dan status dikirim ke WhatsApp.'
-    ]
+    ],
+    detailsHtml: "<h2 class='h4 mt-4 mb-2'>Top Up Free Fire (FF)</h2><p>Beli Diamond FF murah, proses instan, tanpa biaya admin. Masukkan Player ID, pilih nominal, bayar via QRIS/e\u2011wallet, item langsung masuk.</p>"
   },
 
   pubg: {
@@ -47,7 +49,8 @@ window.GAMES = {
       'Pilih UC/Prime yang mau dibeli.',
       'Isi WA dan bayar. Kami top up via ID (bukan login).',
       'UC akan masuk, cek mail/Inbox di game.'
-    ]
+    ],
+    detailsHtml: "<h2 class='h4 mt-4 mb-2'>Top Up PUBG Mobile</h2><p>Beli UC PUBG Mobile cepat & aman. Isi UID, pilih nominal UC, bayar, saldo otomatis terkirim.</p>"
   },
 
   gi: {

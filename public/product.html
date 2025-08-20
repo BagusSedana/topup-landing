@@ -26,7 +26,11 @@
         <h1 id="gameTitle" class="h3 mt-3 fw-semibold">Top Up</h1>
 
         <div class="list-group list-group-flush mt-3 shadow-sm rounded-4">
-          <div class="list-group-item">🔁 <b>Proses Instan</b>. Kirim cepat hitungan detik.</div>
+          <div class="list-group-item">🔁 <b>Proses Instan</b>. Kirim cepat hitungan detik.
+        
+        <!-- Konten dinamis per-produk -->
+        <section id="gameContent" class="mt-4"></section>
+    </div>
           <div class="list-group-item">🔒 <b>Resmi & Aman</b>. Pembayaran lokal.</div>
           <div class="list-group-item">💸 <b>Harga Hemat</b>. Banyak diskon + tanpa biaya admin.</div>
         </div>
@@ -117,9 +121,33 @@
       </div>
     </div>
 
-    <footer class="text-center text-muted small mt-5">
-      © <span id="year"></span> TopUpGim — cepat, murah, instan.
-    </footer>
+    <footer class="mt-4">
+    <div class="container py-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="fw-bold mb-2">TopUpGim</div>
+          <div class="sec-note">Platform top up game, pulsa, & voucher digital. Harga hemat, proses instan.</div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="fw-semibold mb-2">Legal</div>
+          <div><a class="link-muted" href="#">Terms</a></div>
+          <div><a class="link-muted" href="#">Privacy</a></div>
+          <div><a class="link-muted" href="#">Refund</a></div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="fw-semibold mb-2">Bantuan</div>
+          <div><a class="link-muted" href="#">Hubungi CS</a></div>
+          <div><a class="link-muted" href="#">FAQ</a></div>
+          <div><a class="link-muted" href="#">Panduan</a></div>
+        </div>
+        <div class="col-md-3">
+          <div class="fw-semibold mb-2">Aplikasi Mobilee</div>
+          <i class="bi bi-google-play fs-2"></i>
+        </div>
+      </div>
+      <div class="text-secondary small mt-3">© <span id="y"></span> TopUpGim. All rights reserved.</div>
+    </div>
+  </footer>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -130,7 +158,7 @@
     window.GAMES  = window.GAMES  || { ml:{ name:'Mobile Legends' } };
   </script>
 
-  <script src="/assets/js/app.js"></script>
   <script src="/assets/js/data.js"></script>
+  <script src="/assets/js/app.js"></script>
 </body>
 </html>
