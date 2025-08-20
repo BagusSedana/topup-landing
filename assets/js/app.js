@@ -1,7 +1,7 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // =========================================================
-  //  TopUpGim - Product Page Logic
+  //  TopUpGim - Product Page Logic (refactor nominal grid + confirm card)
   // =========================================================
 
   // -------------------- CONFIG & UTILS ---------------------
@@ -53,12 +53,29 @@
   const buktiInput   = qs('#buktiTransfer');
   const yearEl       = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // --- Fix gutter kiri pada grid nominal ---
-  // --- Fix gutter kiri pada grid nominal ---
-  if (nominalGrid) {
-    // tetap jadikan grid sebagai row dgn gutter 3
-    nominalGrid.classList.add('row', 'gx-3', 'gy-3', 'nominal-row');
-  }
+  // --- Inject minimal CSS agar grid nempel ke tepi card-body & style kartu nominal ---
+  (function ensureInlineStyles(){
+    if (document.getElementById('product-inline-css')) return;
+    const style = document.createElement('style');
+    style.id = 'product-inline-css';
+    style.textContent = `
+      /* grid nominal nempel ke tepi card-body */
+      #nominalGrid.nominal-row{margin-left:calc(-1 * var(--bs-card-spacer-x,1rem));margin-right:calc(-1 * var(--bs-card-spacer-x,1rem))}
+      #nominalGrid.nominal-row>[class^="col-"],#nominalGrid.nominal-row>[class*=" col-"]{padding-left:var(--bs-card-spacer-x,1rem);padding-right:var(--bs-card-spacer-x,1rem)}
+      #nominalGrid .skeleton{width:100%}
+      /* kartu nominal */
+      #nominalGrid .option{border:1.5px solid #e5e7eb;border-radius:.875rem;padding:.8rem .95rem;background:#fff;min-height:74px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:border-color .15s,box-shadow .15s,transform .12s}
+      #nominalGrid .option .label{font-weight:600;font-size:.95rem;line-height:1.15;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #nominalGrid .option .price{font-weight:700;font-size:1rem;line-height:1.2;color:#0f172a}
+      #nominalGrid .form-check-input{display:none}
+      #nominalGrid .form-check-input:checked + .option{border-color:#16a34a;box-shadow:0 0 0 .22rem rgba(22,163,74,.15)}
+      #nominalGrid .form-check-input:checked + .option .price{color:#16a34a}
+    `;
+    document.head.appendChild(style);
+  })();
+
+  // --- Fix gutter kiri/kanan grid nominal ---
+  if (nominalGrid) nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
 
   // bikin input bukti ramah mobile kamera
   if (buktiInput) {
@@ -152,7 +169,7 @@
     `).join('');
   }
 
-  //WA wajib
+  //WA wajib (abaikan jika input tidak ada di form)
   const waInput = form?.['whatsapp'];
   if (waInput) {
     waInput.required = true;
@@ -216,7 +233,6 @@
             <!-- tombol submit lama (kalau ada) akan dipindahkan ke sini -->
           </div>
         </div>`;
-      // taruh setelah section nominal
       (orderSection || document.body).appendChild(confirmCard);
     }
 
@@ -385,13 +401,13 @@
       col.className = 'col-6 col-md-4';
       const id = `opt_${key}`;
       col.innerHTML = `
-      <label class="form-check w-100 ps-0">
-        <input class="form-check-input d-none" type="radio" name="nominal" id="${id}" value="${key}">
-        <div class="option">
-          <div class="fw-semibold small">${items[key].label}</div>
-          <div class="small text-muted">${rupiah(items[key].price)}</div>
-        </div>
-      </label>`;
+        <label class="form-check w-100">
+          <input class="form-check-input" type="radio" name="nominal" id="${id}" value="${key}">
+          <div class="option">
+            <div class="label">${items[key].label}</div>
+            <div class="price">${rupiah(items[key].price)}</div>
+          </div>
+        </label>`;
       nominalGrid.appendChild(col);
     });
 
@@ -436,7 +452,7 @@
     for (let i=0;i<6;i++){
       const col = document.createElement('div');
       col.className = 'col-6 col-md-4';
-      col.innerHTML = '<div class="skeleton w-100"></div>';
+      col.innerHTML = '<div class="skeleton"></div>';
       nominalGrid.appendChild(col);
     }
   }
