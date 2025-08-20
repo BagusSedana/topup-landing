@@ -1,12 +1,12 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // =========================================================
-  //  TopUpGim - Product Page Logic (full, uncut)
+  // TopUpGim - Product Page Logic (prices dari backend)
   // =========================================================
 
   // -------------------- CONFIG & UTILS ---------------------
-  const PUBLIC_API = '/api/public';
-  const API_KEY = window.API_KEY || null; // set di HTML kalau langsung tembak Apps Script
+  const PUBLIC_API = window.PUBLIC_API || '/api/public';  // bisa proxy atau direct Apps Script
+  const API_KEY    = window.API_KEY    || null;            // optional (kalau pakai proxy, boleh null)
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -22,13 +22,45 @@
     return /^0\d{8,15}$/.test(wa) ? ('62' + wa.slice(1)) : wa;
   };
 
-  function waitFor(cond, cb, { timeout = 4000, every = 40 } = {}) {
-    const t0 = Date.now();
-    (function loop(){
-      if (cond()) return cb();
-      if (Date.now() - t0 > timeout) return console.warn('[product] PRICES/GAMES belum tersedia.');
-      setTimeout(loop, every);
-    })();
+  // fetch helper (text/plain → json fallback)
+  async function postJSONAny(url, obj) {
+    let resp = await fetch(url, {
+      method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(obj)
+    });
+    let txt = await resp.text();
+    let data; try{ data = JSON.parse(txt);}catch{ data = { error: txt || 'Bad JSON' }; }
+    if (resp.ok && !data.error) return data;
+
+    resp = await fetch(url, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(obj)
+    });
+    txt = await resp.text();
+    try{ data = JSON.parse(txt);}catch{ data = { error: txt || 'Bad JSON' }; }
+    if (!resp.ok || data.error) {
+      const msg = (data && (data.message||data.error)) ? (data.message||data.error) : `HTTP ${resp.status}`;
+      throw new Error(msg);
+    }
+    return data;
+  }
+
+  // ------------------- LOAD PRICES (NEW) -------------------
+  async function loadPricesFromBackend() {
+    try {
+      const body = { action:'prices' };
+      if (API_KEY) body.api_key = API_KEY;
+      const res = await postJSONAny(PUBLIC_API, body);
+      if (res && res.ok && res.prices && Object.keys(res.prices).length) {
+        // override PRICES dari backend
+        window.PRICES = res.prices;
+        console.debug('[prices] loaded from backend:', window.PRICES);
+      } else {
+        console.warn('[prices] backend returned empty, fallback to data.js');
+      }
+    } catch (e) {
+      console.warn('[prices] failed to load from backend, fallback to data.js:', e.message);
+    }
   }
 
   // --------------------- DOM REFERENCES --------------------
@@ -43,13 +75,16 @@
   const yearEl       = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // ⛔ JANGAN pindahkan dynamic fields ke <form> (biar tetap di kartu "Masukkan Informasi Akun")
+  // container dinamis (hanya dipakai kalau input player/server BELUM ada secara statis)
   let dyn = qs('#dynamicFields');
-  if (!dyn && orderSection) {
+  const hasStaticPlayer = !!document.querySelector('input[name="player_id"]');
+  if (dyn && hasStaticPlayer) {
+    dyn.innerHTML = ''; // jangan render ulang kalau sudah ada input statis
+  } else if (!dyn) {
     dyn = document.createElement('div');
     dyn.id = 'dynamicFields';
     dyn.className = 'row g-3';
-    orderSection.prepend(dyn);
+    orderSection?.prepend(dyn);
   }
 
   // ----------------------- QR MODAL ------------------------
@@ -103,7 +138,7 @@
   };
 
   function renderFields(code){
-    if (!dyn) return;
+    if (hasStaticPlayer) return; // sudah ada input statis → skip
     const schema = FORM_FIELDS[code] || FORM_FIELDS.DEFAULT;
     dyn.innerHTML = schema.map(f => `
       <div class="col-md-6">
@@ -117,57 +152,13 @@
     `).join('');
   }
 
-  // WA ada di kartu 1 (bukan di <form>)
+  // WA diwajibkan
   const waInput = document.querySelector('input[name="whatsapp"]');
   if (waInput) {
     waInput.required = true;
     waInput.pattern = '^0\\d{8,14}$';
     waInput.addEventListener('input', () => {
       waInput.setCustomValidity(waInput.validity.patternMismatch ? 'Format WA tidak valid (contoh 08xxxxxxxxxx)' : '');
-    });
-  }
-
-  // ------------------------ HTTP --------------------------
-  async function postJSONAny(url, obj) {
-    // try 1: text/plain
-    let resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(obj)
-    });
-    let text = await resp.text();
-    let data; try { data = JSON.parse(text); } catch { data = { error: text || 'Bad JSON' }; }
-    if (resp.ok && !data.error) return data;
-
-    // try 2: application/json
-    resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(obj)
-    });
-    text = await resp.text();
-    try { data = JSON.parse(text); } catch { data = { error: text || 'Bad JSON' }; }
-    if (!resp.ok || data.error) {
-      const msg = (data && (data.message || data.error)) ? (data.message || data.error) : `HTTP ${resp.status}`;
-      throw new Error(msg);
-    }
-    return data;
-  }
-
-  // kompres gambar
-  async function compressImageToDataURL(file, {maxW=1200, maxH=1200, quality=0.75} = {}) {
-    const bmp = await createImageBitmap(file);
-    const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(bmp.width * scale);
-    canvas.height = Math.round(bmp.height * scale);
-    canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result);
-        r.readAsDataURL(blob);
-      }, 'image/jpeg', quality);
     });
   }
 
@@ -193,7 +184,6 @@
     const up = String(inputRaw).toUpperCase();
     const low = String(inputRaw).toLowerCase();
     const norm = sanitize(inputRaw);
-
     if (PRICES[up]) return up;
     for (const code of Object.keys(PRICES)) {
       const slug = PRICES[code]?.slug;
@@ -288,6 +278,8 @@
 
   // --------------------- LISTENERS -------------------------
   function wireListeners(){
+    const dynFields = (code) => { renderFields(code); syncProductHeader(code); };
+
     if (gameSel) {
       orderSection?.classList.add('d-none');
       gameSel.addEventListener('change', e => {
@@ -296,12 +288,11 @@
           nominalGrid.innerHTML = '';
           totalPriceEl.textContent = rupiah(0);
           orderSection?.classList.add('d-none');
-          dyn.innerHTML = '';
+          if (dyn) dyn.innerHTML = '';
           return;
         }
         renderNominals(val);
-        renderFields(val);
-        syncProductHeader(val);
+        dynFields(val);
         localStorage.setItem('lastGame', val);
         orderSection?.classList.remove('d-none');
       });
@@ -310,6 +301,7 @@
     // SUBMIT: create order → show QR
     form?.addEventListener('submit', async (ev) => {
       ev.preventDefault();
+      if (!form.checkValidity()) { ev.stopPropagation(); form.classList.add('was-validated'); return; }
       if (!selectedItemKey) { nominalError?.classList.remove('d-none'); nominalGrid.scrollIntoView({behavior:'smooth', block:'center'}); return; }
       nominalError?.classList.add('d-none');
 
@@ -324,6 +316,7 @@
 
       const payload = {
         action: 'create_order',
+        // produk
         game: selectedGame || findPriceCode(getParam('game')) || Object.keys(PRICES)[0],
         game_name: conf.key,
         item_key: selectedItemKey,
@@ -334,7 +327,7 @@
         fast_fee: conf.fastFee || 0,
         total,
 
-        // akun (ambil dari kartu 1)
+        // akun
         player_id: readVal('player_id'),
         server_id: readVal('server_id') || undefined,
 
@@ -349,9 +342,9 @@
         callback_url: location.origin + '/api/webhook',
         timestamp: new Date().toISOString()
       };
-
       if (API_KEY) payload.api_key = API_KEY;
 
+      // loading state
       const btn = ev.submitter || qs('#btnKirim');
       const prev = btn ? btn.innerHTML : null;
       if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Membuat pesanan…'; }
@@ -366,7 +359,6 @@
         lastOrderId = d1.order_id || d1.id || null;
         lastPayInfo = extractPay(d1);
 
-        // tampilkan modal QR
         const totalPay = lastPayInfo.total || total;
         payTotal.textContent = 'Total: ' + rupiah(totalPay);
         payInfo.textContent  = lastPayInfo.expires ? ('Bayar sebelum: ' + new Date(lastPayInfo.expires).toLocaleString('id-ID')) : 'Scan untuk bayar';
@@ -419,7 +411,7 @@
       if (lastPayInfo?.deeplink) window.open(lastPayInfo.deeplink, '_blank', 'noopener');
     });
 
-    // upload bukti (opsional)
+    // upload bukti
     btnUpload?.addEventListener('click', async () => {
       try{
         const f = buktiInput?.files?.[0];
@@ -428,7 +420,22 @@
         if (f.size > 10*1024*1024) { alert('Maksimal 10MB'); return; }
         if (!lastOrderId) { alert('Order belum terbentuk. Klik "Buat Pesanan" dulu.'); return; }
 
-        const buktiBase64 = await compressImageToDataURL(f, {maxW:1200,maxH:1200,quality:0.75});
+        const buktiBase64 = await (async (file, {maxW=1200,maxH=1200,quality=0.75} = {}) => {
+          const bmp = await createImageBitmap(file);
+          const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(bmp.width * scale);
+          canvas.height = Math.round(bmp.height * scale);
+          canvas.getContext('2d').drawImage(bmp, 0, 0, canvas.width, canvas.height);
+          return new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+              const r = new FileReader();
+              r.onload = () => resolve(r.result);
+              r.readAsDataURL(blob);
+            }, 'image/jpeg', quality);
+          });
+        })(f);
+
         const body = { action:'upload_proof', order_id:lastOrderId, bukti:buktiBase64 };
         if (API_KEY) body.api_key = API_KEY;
         const d2 = await postJSONAny(PUBLIC_API, body);
@@ -442,9 +449,10 @@
   }
 
   // ------------------------ BOOT ---------------------------
-  function boot(){
-    // kalau ada <select id="game"> isi otomatis
+  async function boot(){
+    // isi <select> game kalau ada
     if (gameSel && window.PRICES) {
+      gameSel.innerHTML = ''; // reset
       const frag = document.createDocumentFragment();
       Object.keys(PRICES).forEach(code => {
         const opt = document.createElement('option');
@@ -459,7 +467,7 @@
 
     const paramGame = getParam('game');
     const lastGame  = localStorage.getItem('lastGame');
-    const initCode  = findPriceCode(paramGame) || findPriceCode(lastGame);
+    const initCode  = findPriceCode(paramGame) || findPriceCode(lastGame) || Object.keys(window.PRICES||{})[0];
 
     if (initCode && PRICES[initCode]) {
       if (gameSel) {
@@ -473,9 +481,22 @@
       }
     } else {
       orderSection?.classList.add('d-none');
-      console.warn('[product] gagal resolve game dari query. Pastikan ?game=ml/ff/pubg.');
+      console.warn('[product] gagal resolve game. Pastikan ?game=ml/ff/pubg atau catalog ada datanya.');
     }
   }
 
-  waitFor(() => typeof window.PRICES !== 'undefined', boot);
+  // start: muat prices dari backend dulu → baru render
+  (async () => {
+    await loadPricesFromBackend();           // override PRICES jika tersedia
+    if (!window.PRICES) {
+      console.warn('[product] PRICES belum ada, nunggu data.js sebagai fallback…');
+      const t0 = Date.now();
+      (function wait(){
+        if (window.PRICES || Date.now()-t0>4000) return boot();
+        setTimeout(wait, 40);
+      })();
+    } else {
+      boot();
+    }
+  })();
 })();
