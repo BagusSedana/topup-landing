@@ -1,0 +1,114 @@
+<!doctype html><html lang="id"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+body{background:#0f172a;color:#e2e8f0} .muted{color:#94a3b8}
+.status-badge{padding:.15rem .5rem;border-radius:999px;font-size:.75rem}
+.status-PENDING{background:#fef3c7;color:#92400e}.status-WAITING_PROOF{background:#e5e7eb;color:#374151}
+.status-DONE{background:#dcfce7;color:#166534}.status-FAILED{background:#fee2e2;color:#991b1b}
+.card{background:#111827;border:1px solid #374151;border-radius:16px}
+input,button,select{border-radius:12px}
+.hidden{display:none}
+</style></head><body>
+<div class="container py-4">
+  <div class="card p-3 mb-3">
+    <div id="loginBox" class="d-flex gap-2 align-items-center">
+      <b>Admin Login</b>
+      <input id="pass" class="form-control" type="password" placeholder="Password admin…"/>
+      <button id="btnLogin" class="btn btn-primary">Login</button>
+      <span id="loginMsg" class="ms-2 muted"></span>
+    </div>
+
+    <div id="adminBox" class="hidden">
+      <div class="d-flex align-items-center gap-2">
+        <h4 class="m-0">Dashboard</h4>
+        <div class="ms-auto d-flex gap-2">
+          <button id="btnReload" class="btn btn-secondary">Reload</button>
+          <button id="btnLogout" class="btn btn-outline-danger">Logout</button>
+        </div>
+      </div>
+
+      <div class="row g-2 mt-3">
+        <div class="col-12 col-md-6"><input id="searchQ" class="form-control" placeholder="Cari (Order/WA/Game/Item/Note)…"/></div>
+        <div class="col-6 col-md-3">
+          <select id="filterStatus" class="form-select">
+            <option value="">Semua</option>
+            <option>WAITING_PROOF</option><option>PENDING</option><option>DONE</option><option>FAILED</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3">
+          <select id="limit" class="form-select"><option>50</option><option selected>100</option><option>200</option></select>
+        </div>
+      </div>
+
+      <div class="table-responsive mt-3">
+        <table class="table table-dark table-striped align-middle">
+          <thead><tr><th>Waktu/Status</th><th>Order</th><th>Pelanggan</th><th>Game</th><th>Item</th><th>Total</th><th>Proof</th><th>Aksi</th></tr></thead>
+          <tbody id="tbody"><tr><td colspan="8" class="text-center py-4">Silakan klik Reload</td></tr></tbody>
+        </table>
+      </div>
+      <div class="muted" id="countInfo"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function post(url,data){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'XMLHttpRequest'},credentials:'include',body:JSON.stringify(data||{})});
+  const t=await r.text(); try{return JSON.parse(t)}catch{return t}
+}
+const rupiah=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(Number(n)||0);
+const fmtTs=v=>{try{return new Date(v).toLocaleString('id-ID')}catch{return v}};
+const badge=st=>`<span class="status-badge status-${st}">${st}</span>`;
+
+async function tryPing(){
+  const resp=await post('/api/admin',{action:'whoami'});
+  const ok=resp && resp.ok && resp.admin===true;
+  document.getElementById('loginBox').classList.toggle('hidden',ok);
+  document.getElementById('adminBox').classList.toggle('hidden',!ok);
+  if(ok) loadOrders();
+}
+
+async function loadOrders(){
+  const tbody=document.getElementById('tbody');
+  tbody.innerHTML=`<tr><td colspan="8" class="text-center py-4"><div class="spinner-border"></div> Loading…</td></tr>`;
+  const limit=Number(document.getElementById('limit').value||100);
+  const status=(document.getElementById('filterStatus').value||'').trim().toUpperCase();
+  const q=(document.getElementById('searchQ').value||'').trim();
+  const res=await post('/api/admin',{action:'list_orders',limit,status,q});
+  const items=res.items||[];
+  document.getElementById('countInfo').textContent=`${items.length} order ditampilkan`;
+  tbody.innerHTML=items.map(o=>{
+    const pid=o.player_id||'-', wa=o.whatsapp||'-';
+    const proof=o.bukti_url?`<a class="btn btn-sm btn-outline-info" href="${o.bukti_url}" target="_blank">Bukti</a>`:'-';
+    const topup=o.topupgim_url?`<a class="btn btn-sm btn-primary" href="${o.topupgim_url}" target="_blank">TopUp</a>`:'';
+    return `<tr>
+      <td><div class="small muted">${fmtTs(o.ts)}</div>${badge(o.status)}</td>
+      <td class="small">${o.order_id}</td>
+      <td><div class="fw-semibold">${pid}</div><div class="muted small">${wa}</div>${o.note?`<div class="small mt-1 muted">📝 ${o.note}</div>`:''}</td>
+      <td>${o.game||'-'}</td>
+      <td>${o.item||'-'} ${o.fast?'<span class="badge text-bg-warning ms-1">FAST</span>':''}</td>
+      <td>${rupiah(o.total)}</td>
+      <td>${proof}</td>
+      <td class="d-flex flex-wrap gap-2">${topup}
+        <button class="btn btn-sm btn-success" onclick="upd('${o.order_id}','DONE')">DONE</button>
+        <button class="btn btn-sm btn-warning" onclick="upd('${o.order_id}','PENDING')">PENDING</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="upd('${o.order_id}','FAILED')">FAILED</button>
+      </td></tr>`;
+  }).join('')||`<tr><td colspan="8" class="text-center py-4">Kosong</td></tr>`;
+}
+async function upd(id,st){ await post('/api/admin',{action:'update_status',order_id:id,status:st}); loadOrders(); }
+
+document.getElementById('btnLogin').onclick=async()=>{
+  const pwd=document.getElementById('pass').value.trim(); const msg=document.getElementById('loginMsg');
+  msg.textContent='…'; const r=await post('/api/auth/login',{password:pwd});
+  msg.textContent=r && r.ok ? 'OK' : (r.error||'Gagal');
+  if(r && r.ok) tryPing();
+};
+document.getElementById('btnLogout').onclick=async()=>{await post('/api/auth/logout',{}); tryPing();};
+document.getElementById('btnReload').onclick=loadOrders;
+document.getElementById('searchQ').addEventListener('keydown',e=>{if(e.key==='Enter')loadOrders();});
+tryPing();
+</script>
+</body></html>
