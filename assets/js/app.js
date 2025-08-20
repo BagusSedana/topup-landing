@@ -1,7 +1,7 @@
 /* global bootstrap, PRICES, GAMES */
 (() => {
   // =========================================================
-  //  TopUpGim - Product Page Logic (refactor nominal grid + confirm card)
+  //  TopUpGim - Product Page Logic (rapihin kartu nominal + auto-update ringkasan)
   // =========================================================
 
   // -------------------- CONFIG & UTILS ---------------------
@@ -49,33 +49,62 @@
   const nominalGrid  = qs('#nominalGrid');
   const nominalError = qs('#nominalError');
   const totalPriceEl = qs('#totalPrice');
-  const fastMode     = qs('#fastMode');
+  const fastMode     = qs('#fastMode'); // kalau tidak ada di HTML, otomatis abaikan
   const buktiInput   = qs('#buktiTransfer');
   const yearEl       = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // --- Inject minimal CSS agar grid nempel ke tepi card-body & style kartu nominal ---
+  // ---------- Inject CSS agar label TIDAK terpotong & layout lebih rapi ----------
   (function ensureInlineStyles(){
     if (document.getElementById('product-inline-css')) return;
     const style = document.createElement('style');
     style.id = 'product-inline-css';
     style.textContent = `
-      /* grid nominal nempel ke tepi card-body */
-      #nominalGrid.nominal-row{margin-left:calc(-1 * var(--bs-card-spacer-x,1rem));margin-right:calc(-1 * var(--bs-card-spacer-x,1rem))}
-      #nominalGrid.nominal-row>[class^="col-"],#nominalGrid.nominal-row>[class*=" col-"]{padding-left:var(--bs-card-spacer-x,1rem);padding-right:var(--bs-card-spacer-x,1rem)}
+      /* ratakan grid ke tepi card-body */
+      #nominalGrid.nominal-row{
+        margin-left:calc(-1 * var(--bs-card-spacer-x,1rem));
+        margin-right:calc(-1 * var(--bs-card-spacer-x,1rem));
+      }
+      #nominalGrid.nominal-row>[class^="col-"],#nominalGrid.nominal-row>[class*=" col-"]{
+        padding-left:var(--bs-card-spacer-x,1rem);
+        padding-right:var(--bs-card-spacer-x,1rem);
+      }
       #nominalGrid .skeleton{width:100%}
-      /* kartu nominal */
-      #nominalGrid .option{border:1.5px solid #e5e7eb;border-radius:.875rem;padding:.8rem .95rem;background:#fff;min-height:74px;display:flex;flex-direction:column;justify-content:center;gap:4px;transition:border-color .15s,box-shadow .15s,transform .12s}
-      #nominalGrid .option .label{font-weight:600;font-size:.95rem;line-height:1.15;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-      #nominalGrid .option .price{font-weight:700;font-size:1rem;line-height:1.2;color:#0f172a}
+
+      /* kartu nominal: wrap text, ada icon, tinggi konsisten */
+      #nominalGrid .option{
+        border:1.5px solid #e5e7eb;
+        border-radius:.875rem;
+        background:#fff;
+        padding:.8rem .95rem;
+        min-height:86px;
+        display:flex;
+        gap:.75rem;
+        align-items:flex-start;
+        transition:border-color .15s, box-shadow .15s, transform .12s;
+      }
+      #nominalGrid .ico{
+        flex:0 0 28px; height:28px; width:28px;
+        display:grid; place-items:center;
+        border-radius:999px;
+        background:#eef6ff;
+        font-size:14px; line-height:1;
+      }
+      #nominalGrid .meta{min-width:0;display:flex;flex-direction:column;gap:2px}
+      #nominalGrid .label{
+        font-weight:600; font-size:.95rem; line-height:1.15; color:#0f172a;
+        white-space:normal; overflow:visible; text-overflow:clip;  /* <= tampilkan teks penuh */
+      }
+      #nominalGrid .price{
+        font-weight:700; font-size:1rem; line-height:1.2; color:#0f172a;
+      }
       #nominalGrid .form-check-input{display:none}
-      #nominalGrid .form-check-input:checked + .option{border-color:#16a34a;box-shadow:0 0 0 .22rem rgba(22,163,74,.15)}
+      #nominalGrid .form-check-input:checked + .option{
+        border-color:#16a34a; box-shadow:0 0 0 .22rem rgba(22,163,74,.15);
+      }
       #nominalGrid .form-check-input:checked + .option .price{color:#16a34a}
     `;
     document.head.appendChild(style);
   })();
-
-  // --- Fix gutter kiri/kanan grid nominal ---
-  if (nominalGrid) nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
 
   // bikin input bukti ramah mobile kamera
   if (buktiInput) {
@@ -133,7 +162,6 @@
   const btnOpen   = qs('#btnOpenPayApp', payModalEl);
   const btnUpload = qs('#btnUploadProof', payModalEl);
 
-  // kalau gambar QR gagal dimuat, pakai fallback lokal
   if (payQr) {
     payQr.addEventListener('error', () => {
       if (!payQr.dataset.fallbacked) {
@@ -169,7 +197,7 @@
     `).join('');
   }
 
-  //WA wajib (abaikan jika input tidak ada di form)
+  // WA wajib (kalau input tidak ada ya di-skip)
   const waInput = form?.['whatsapp'];
   if (waInput) {
     waInput.required = true;
@@ -179,15 +207,15 @@
     });
   }
 
-  // ------------------------ UI PATCH (hapus Periksa/Tutorial + tambah Konfirmasi) -------------
+  // ------------------------ UI PATCH (Konfirmasi Pembelian) -------------
   function setupConfirmationCard() {
-    // hapus tombol "Periksa" & "Tutorial" kalau ada
+    // hapus tombol "Periksa/Tutorial" kalau ada
     qsa('button, a').forEach(el => {
       const t = (el.textContent||'').trim().toLowerCase();
       if (t === 'periksa' || t === 'tutorial') el.remove();
     });
 
-    // jika confirm card belum ada → buat & pindahkan tombol submit lama ke dalamnya
+    // buat card ringkasan jika belum ada
     let confirmCard = qs('#confirmCard');
     if (!confirmCard) {
       confirmCard = document.createElement('div');
@@ -229,14 +257,12 @@
               </div>
             </div>
           </div>
-          <div class="mt-3">
-            <!-- tombol submit lama (kalau ada) akan dipindahkan ke sini -->
-          </div>
+          <div class="mt-3"><!-- tombol submit lama akan dipindah ke sini --></div>
         </div>`;
       (orderSection || document.body).appendChild(confirmCard);
     }
 
-    // pindahkan tombol submit lama ke dalam confirmCard, ubah teksnya
+    // pindahkan tombol submit lama ke dalam confirmCard
     const submitOld = form?.querySelector('button[type="submit"]');
     if (submitOld && !confirmCard.contains(submitOld)) {
       const holder = confirmCard.querySelector('.mt-3');
@@ -247,12 +273,12 @@
     }
   }
 
-  // refs ringkasan (akan terisi setelah card dibuat)
+  // refs ringkasan (akan diambil ulang setiap kali hitung total)
   let sumItem, sumPrice, sumAdmin, sumDisc, sumTotal;
 
   // ------------------------ HTTP --------------------------
   async function postJSONAny(url, obj) {
-    // try text/plain (anti preflight)
+    // coba text/plain (anti preflight)
     let resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -277,7 +303,7 @@
     return data;
   }
 
-  // kompres gambar (fallback kalau createImageBitmap tidak ada)
+  // kompres gambar bukti
   async function compressImageToDataURL(file, {maxW=1000, maxH=1000, quality=0.65} = {}) {
     const drawToCanvas = (img, w, h) => {
       const canvas = document.createElement('canvas');
@@ -291,7 +317,6 @@
         }, 'image/jpeg', quality);
       });
     };
-
     try {
       const bmp = await createImageBitmap(file);
       const scale = Math.min(1, maxW / bmp.width, maxH / bmp.height);
@@ -379,20 +404,19 @@
   // ------------------ NOMINAL & TOTAL ---------------------
   let selectedGame = null;
   let selectedItemKey = null;
-  let selectedPrice = 0;
-  let currentFastFee = 0;
   let lastOrderId = null;
   let lastPayInfo = null;
+  let autoScrolled = false;
 
+  // render pilihan nominal (label selalu penuh)
   function renderNominals(code) {
     const conf = PRICES[code];
     if (!conf) return;
 
     selectedGame = code;
     selectedItemKey = null;
-    selectedPrice = 0;
-    currentFastFee = conf.fastFee || 0;
     nominalGrid.innerHTML = '';
+    nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
     nominalError?.classList.add('d-none');
 
     const items = conf.items || {};
@@ -400,12 +424,16 @@
       const col = document.createElement('div');
       col.className = 'col-6 col-md-4';
       const id = `opt_${key}`;
+      const lbl = items[key].label || key;
       col.innerHTML = `
         <label class="form-check w-100">
           <input class="form-check-input" type="radio" name="nominal" id="${id}" value="${key}">
           <div class="option">
-            <div class="label">${items[key].label}</div>
-            <div class="price">${rupiah(items[key].price)}</div>
+            <div class="ico">💎</div>
+            <div class="meta">
+              <div class="label">${lbl}</div>
+              <div class="price">${rupiah(items[key].price)}</div>
+            </div>
           </div>
         </label>`;
       nominalGrid.appendChild(col);
@@ -414,8 +442,13 @@
     qsa('input[name="nominal"]', nominalGrid).forEach(inp => {
       inp.addEventListener('change', () => {
         selectedItemKey = inp.value;
-        selectedPrice = PRICES[code].items[selectedItemKey].price;
-        calcTotal();
+        calcTotal();                       // langsung sinkron ke Ringkasan
+        // tarik ke bawah (sekali aja biar ga ganggu)
+        if (!autoScrolled) {
+          const card = qs('#confirmCard');
+          if (card) { card.scrollIntoView({ behavior:'smooth', block:'start' }); }
+          autoScrolled = true;
+        }
       });
     });
 
@@ -433,7 +466,7 @@
 
     if (totalPriceEl) totalPriceEl.textContent = rupiah(total);
 
-    // refresh refs ringkasan (mungkin baru dibuat)
+    // refresh refs ringkasan
     sumItem  = qs('#sumItem'); sumPrice = qs('#sumPrice');
     sumAdmin = qs('#sumAdmin'); sumDisc  = qs('#sumDisc'); sumTotal = qs('#sumTotal');
 
@@ -449,6 +482,7 @@
   function showNominalSkeleton() {
     if (!nominalGrid) return;
     nominalGrid.innerHTML = '';
+    nominalGrid.classList.add('row','gx-3','gy-3','nominal-row');
     for (let i=0;i<6;i++){
       const col = document.createElement('div');
       col.className = 'col-6 col-md-4';
@@ -488,11 +522,12 @@
         const val = e.target.value;
         if (!val) {
           nominalGrid.innerHTML = '';
-          totalPriceEl.textContent = rupiah(0);
+          totalPriceEl && (totalPriceEl.textContent = rupiah(0));
           orderSection?.classList.add('d-none');
           dyn.innerHTML = '';
           return;
         }
+        autoScrolled = false;
         renderNominals(val);
         renderFields(val);
         syncProductHeader(val);
@@ -635,8 +670,6 @@
 
     btnUpload?.addEventListener('click', async () => {
       if (!buktiInput) { alert('Input bukti tidak ditemukan.'); return; }
-
-      // belum ada file → buka picker dan auto-upload setelah dipilih
       if (!buktiInput.files?.length) {
         buktiInput.click();
         const onPick = () => {
@@ -647,8 +680,6 @@
         buktiInput.addEventListener('change', onPick, { once: true });
         return;
       }
-
-      // sudah ada file → langsung upload
       const f = buktiInput.files[0];
       await withSpinner(btnUpload, 'Mengunggah…', () => doUpload(f));
     });
