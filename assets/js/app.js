@@ -145,15 +145,15 @@
     `).join('');
   }
 
-  // WA wajib
-  // const waInput = form?.['whatsapp'];
-  // if (waInput) {
-  //   waInput.required = true;
-  //   waInput.pattern = '^0\\d{8,14}$';
-  //   waInput.addEventListener('input', () => {
-  //     waInput.setCustomValidity(waInput.validity.patternMismatch ? 'Format WA tidak valid (contoh 08xxxxxxxxxx)' : '');
-  //   });
-  // }
+  WA wajib
+  const waInput = form?.['whatsapp'];
+  if (waInput) {
+    waInput.required = true;
+    waInput.pattern = '^0\\d{8,14}$';
+    waInput.addEventListener('input', () => {
+      waInput.setCustomValidity(waInput.validity.patternMismatch ? 'Format WA tidak valid (contoh 08xxxxxxxxxx)' : '');
+    });
+  }
 
   // ------------------------ UI PATCH (hapus Periksa/Tutorial + tambah Konfirmasi) -------------
   function setupConfirmationCard() {
