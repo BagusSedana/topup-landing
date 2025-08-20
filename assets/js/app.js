@@ -86,12 +86,20 @@
   const btnUpload  = qs('#btnUploadProof', payModalEl);
 
   const FORM_FIELDS = {
-    ML:   [{ name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
-           { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }],
-    FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,'} }],
-    PUBG: [{ name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,'} }],
-    DEFAULT: [{ name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }]
-  };
+  ML: [
+    { name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
+    { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }
+      ],
+  FF: [
+    { name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,}' }
+      ],
+  PUBG: [
+    { name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,}' }
+      ],
+  DEFAULT: [
+    { name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }
+      ]
+    };
 
   const dyn = qs('#dynamicFields');
   function renderFields(code){
