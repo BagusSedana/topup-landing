@@ -5,6 +5,28 @@
 
   <link rel="stylesheet" href="/assets/css/admin.css" />
 </head><body>
+<nav class="navbar navbar-expand-lg nav-elev sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/index.html">
+        <i class="bi bi-lightning-charge-fill text-primary"></i>
+        <span class="fw-bold">bgstore</span>
+      </a>
+  
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+  
+      <div class="collapse navbar-collapse" id="navMain">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-2 me-lg-3">
+          <li class="nav-item"><a class="nav-link" href="/products.html">Produk</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+        </ul>
+        <a class="btn btn-brand rounded-4 px-3" href="/product.html">
+          <i class="bi bi-bag-check me-1"></i> Order Sekarang
+        </a>
+      </div>
+    </div>
+  </nav>
 <div class="container py-4">
   <div class="card p-3 mb-3">
     <div id="loginBox" class="d-flex gap-2 align-items-center">
@@ -105,4 +127,31 @@ document.getElementById('btnReload').onclick=loadOrders;
 document.getElementById('searchQ').addEventListener('keydown',e=>{if(e.key==='Enter')loadOrders();});
 tryPing();
 </script>
+<footer class="mt-4">
+    <div class="container py-4">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="fw-bold mb-2">TopUpGim</div>
+          <div class="sec-note">Platform top up game, pulsa, & voucher digital. Harga hemat, proses instan.</div>
+        </div>
+        <div class="col-6 col-md-2">
+          <div class="fw-semibold mb-2">Legal</div>
+          <div><a class="link-muted" href="#">Terms</a></div>
+          <div><a class="link-muted" href="#">Privacy</a></div>
+          <div><a class="link-muted" href="#">Refund</a></div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="fw-semibold mb-2">Bantuan</div>
+          <div><a class="link-muted" href="#">Hubungi CS</a></div>
+          <div><a class="link-muted" href="#">FAQ</a></div>
+          <div><a class="link-muted" href="#">Panduan</a></div>
+        </div>
+        <div class="col-md-3">
+          <div class="fw-semibold mb-2">Aplikasi Mobilee</div>
+          <i class="bi bi-google-play fs-2"></i>
+        </div>
+      </div>
+      <div class="text-secondary small mt-3">© <span id="y"></span> TopUpGim. All rights reserved.</div>
+    </div>
+  </footer>
 </body></html>

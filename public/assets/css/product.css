@@ -4,3 +4,8 @@
     body{background:#f7f9fb}
     .rounded-4{border-radius:1rem!important}
   
+
+/* sections stack for product content */
+.stack-16 > .content-section { margin-bottom: 16px; }
+.stack-16 > .content-section:last-child { margin-bottom: 0; }
+#gameContent .card { border-radius: 1rem; }
