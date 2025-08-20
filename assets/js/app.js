@@ -145,7 +145,7 @@
     `).join('');
   }
 
-  WA wajib
+  //WA wajib
   const waInput = form?.['whatsapp'];
   if (waInput) {
     waInput.required = true;
