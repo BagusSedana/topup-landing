@@ -429,7 +429,7 @@
     for (let i=0;i<6;i++){
       const col = document.createElement('div');
       col.className = 'col-6 col-md-4';
-      col.innerHTML = '<div class="skeleton"></div>';
+      col.innerHTML = '<div class="skeleton w-100"></div>';
       nominalGrid.appendChild(col);
     }
   }
