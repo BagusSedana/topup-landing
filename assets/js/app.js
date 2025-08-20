@@ -7,6 +7,7 @@
   // -------------------- CONFIG & UTILS ---------------------
   const PUBLIC_API = '/api/public';
   const API_KEY = window.API_KEY || null; // kalau call langsung Apps Script
+  const DEFAULT_QR = '/assets/img/qris.jpg'; // <-- fallback QR lokal
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -374,11 +375,18 @@
         payTotal.textContent = 'Total: ' + rupiah(totalPay);
         payInfo.textContent  = lastPayInfo.expires ? ('Bayar sebelum: ' + new Date(lastPayInfo.expires).toLocaleString('id-ID')) : 'Scan untuk bayar';
 
-        let qrImg = null;
-        if (lastPayInfo.qrUrl) qrImg = lastPayInfo.qrUrl;
-        else if (lastPayInfo.qrString) qrImg = buildQrImgUrlFromString(lastPayInfo.qrString);
+        // --- QR image (qr_url → qr_string → fallback lokal) + cache-busting
+        let qrImg = lastPayInfo.qrUrl
+          || (lastPayInfo.qrString ? buildQrImgUrlFromString(lastPayInfo.qrString) : null)
+          || DEFAULT_QR;
 
-        if (qrImg) { payQr.src = qrImg; payQr.style.display = ''; } else { payQr.style.display = 'none'; }
+        if (qrImg) {
+          const bust = (qrImg.includes('?') ? '&' : '?') + 't=' + Date.now();
+          payQr.src = qrImg + bust;
+          payQr.style.display = '';
+        } else {
+          payQr.style.display = 'none';
+        }
 
         btnOpen.classList.toggle('d-none', !lastPayInfo.deeplink);
         btnCopy.classList.toggle('d-none', !(lastPayInfo.qrString || lastPayInfo.va));
