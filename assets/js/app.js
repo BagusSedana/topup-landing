@@ -7,7 +7,8 @@
   // -------------------- CONFIG & UTILS ---------------------
   const PUBLIC_API = '/api/public';
   const API_KEY = window.API_KEY || null; // kalau call langsung Apps Script
-  const DEFAULT_QR = '/assets/img/qris.jpg'; // <-- fallback QR lokal
+  const DEFAULT_QR = '/assets/img/qris.jpg'; // fallback QR lokal
+  const DISCOUNT_RATE = 0; // contoh diskon global (0.03 = 3%). Biarkan 0 jika tidak ada.
 
   const rupiah = (n) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
@@ -121,14 +122,14 @@
 
   // -------------------- DYNAMIC FIELDS ---------------------
   const FORM_FIELDS = {
-  ML: [
-    { name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
-    { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }
-  ],
-  FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,}' }],
-  PUBG: [{ name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,}'}],
-  DEFAULT: [{ name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }]
-};
+    ML: [
+      { name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }
+    ],
+    FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,}' }],
+    PUBG: [{ name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,}'}],
+    DEFAULT: [{ name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }]
+  };
 
   function renderFields(code){
     const schema = FORM_FIELDS[code] || FORM_FIELDS.DEFAULT;
@@ -153,6 +154,78 @@
       waInput.setCustomValidity(waInput.validity.patternMismatch ? 'Format WA tidak valid (contoh 08xxxxxxxxxx)' : '');
     });
   }
+
+  // ------------------------ UI PATCH (hapus Periksa/Tutorial + tambah Konfirmasi) -------------
+  function setupConfirmationCard() {
+    // hapus tombol "Periksa" & "Tutorial" kalau ada
+    qsa('button, a').forEach(el => {
+      const t = (el.textContent||'').trim().toLowerCase();
+      if (t === 'periksa' || t === 'tutorial') el.remove();
+    });
+
+    // jika confirm card belum ada → buat & pindahkan tombol submit lama ke dalamnya
+    let confirmCard = qs('#confirmCard');
+    if (!confirmCard) {
+      confirmCard = document.createElement('div');
+      confirmCard.id = 'confirmCard';
+      confirmCard.className = 'card border-0 shadow-sm rounded-4 mt-3';
+      confirmCard.innerHTML = `
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-5">
+              <div class="fw-semibold mb-2">Konfirmasi Pembelian</div>
+              <label class="form-label small text-muted mb-1">No. WhatsApp (opsional)</label>
+              <input type="tel" class="form-control rounded-4" name="whatsapp_alt" placeholder="08xxxxxxxxxx" />
+              <div class="form-text">Kalau diisi, struk juga dikirim ke nomor ini.</div>
+            </div>
+            <div class="col-md-7">
+              <div class="fw-semibold mb-2">Ringkasan Pesanan</div>
+              <div class="summary small">
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                  <span>Item</span><span id="sumItem">-</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                  <span>Metode Pembayaran</span><span>QRIS</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                  <span>Harga Awal</span><span id="sumPrice">Rp0</span>
+                </div>
+                <div class="d-flex justify-content-between py-1">
+                  <span>Biaya Admin</span><span id="sumAdmin">Rp0</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 border-bottom">
+                  <span>Diskon Hemat</span><span id="sumDisc">-Rp0</span>
+                </div>
+                <div class="d-flex justify-content-between py-2 fw-bold fs-6">
+                  <span>Total Tagihan</span><span id="sumTotal">Rp0</span>
+                </div>
+              </div>
+              <div class="text-muted small mt-2">
+                Pastikan pesanan kamu sudah benar sebelum melanjutkan pesanan.
+              </div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <!-- tombol submit lama (kalau ada) akan dipindahkan ke sini -->
+          </div>
+        </div>`;
+      // taruh setelah section nominal
+      (orderSection || document.body).appendChild(confirmCard);
+    }
+
+    // pindahkan tombol submit lama ke dalam confirmCard, ubah teksnya
+    const submitOld = form?.querySelector('button[type="submit"]');
+    if (submitOld && !confirmCard.contains(submitOld)) {
+      const holder = confirmCard.querySelector('.mt-3');
+      submitOld.id = 'btnBeli';
+      submitOld.classList.add('btn','btn-success','rounded-4','w-100');
+      submitOld.textContent = '🧾 Beli Sekarang';
+      holder.appendChild(submitOld);
+    }
+  }
+
+  // refs ringkasan (akan terisi setelah card dibuat)
+  let sumItem, sumPrice, sumAdmin, sumDisc, sumTotal;
 
   // ------------------------ HTTP --------------------------
   async function postJSONAny(url, obj) {
@@ -329,23 +402,57 @@
   }
 
   function calcTotal() {
-    let total = selectedPrice || 0;
-    if (fastMode?.checked && total > 0) total += currentFastFee || 0;
+    const conf  = PRICES[selectedGame] || { items:{} };
+    const item  = conf.items[selectedItemKey] || {};
+    const admin = (fastMode?.checked ? (conf.fastFee || 0) : 0);
+    const diskon = Math.round((item.price || 0) * DISCOUNT_RATE);
+    const total  = Math.max(0, (item.price || 0) + admin - diskon);
+
     if (totalPriceEl) totalPriceEl.textContent = rupiah(total);
+
+    // refresh refs ringkasan (mungkin baru dibuat)
+    sumItem  = qs('#sumItem'); sumPrice = qs('#sumPrice');
+    sumAdmin = qs('#sumAdmin'); sumDisc  = qs('#sumDisc'); sumTotal = qs('#sumTotal');
+
+    if (sumItem)  sumItem.textContent  = item.label || '-';
+    if (sumPrice) sumPrice.textContent = rupiah(item.price || 0);
+    if (sumAdmin) sumAdmin.textContent = rupiah(admin);
+    if (sumDisc)  sumDisc.textContent  = '-' + rupiah(diskon).replace('Rp','Rp');
+    if (sumTotal) sumTotal.textContent = rupiah(total);
   }
   fastMode?.addEventListener('change', calcTotal);
 
   // --------------------- PRICES FROM BACKEND ---------------
+  function showNominalSkeleton() {
+    if (!nominalGrid) return;
+    nominalGrid.innerHTML = '';
+    for (let i=0;i<6;i++){
+      const col = document.createElement('div');
+      col.className = 'col-6 col-md-4';
+      col.innerHTML = '<div class="skeleton"></div>';
+      nominalGrid.appendChild(col);
+    }
+  }
+
   async function loadPricesFromBackend() {
     try {
+      const KEY = 'PRICES_CACHE_V1';
+      const cached = localStorage.getItem(KEY);
+      if (cached) {
+        const { ts, prices } = JSON.parse(cached);
+        if (Date.now() - ts < 5 * 60 * 1000 && prices) {
+          window.PRICES = prices;
+          return true;
+        }
+      }
       const data = await postJSONAny(PUBLIC_API, { action: 'list_prices' });
       if (data?.ok && data?.prices) {
         window.PRICES = data.prices;
-        console.log('[prices] loaded from backend');
+        localStorage.setItem(KEY, JSON.stringify({ ts: Date.now(), prices: data.prices }));
         return true;
       }
     } catch (e) {
-      console.warn('[prices] backend failed, fallback to data.js:', e.message || e);
+      console.warn('[prices] backend failed, fallback ke data.js:', e.message || e);
     }
     return false;
   }
@@ -366,6 +473,8 @@
         renderNominals(val);
         renderFields(val);
         syncProductHeader(val);
+        setupConfirmationCard();
+        calcTotal();
         localStorage.setItem('lastGame', val);
         orderSection?.classList.remove('d-none');
       });
@@ -385,7 +494,14 @@
 
       const conf = PRICES[selectedGame];
       const item = conf.items[selectedItemKey];
-      const total = (item?.price || 0) + (fastMode?.checked ? (conf.fastFee || 0) : 0);
+
+      const admin  = (fastMode?.checked ? (conf.fastFee || 0) : 0);
+      const diskon = Math.round((item?.price || 0) * DISCOUNT_RATE);
+      const total  = Math.max(0, (item?.price || 0) + admin - diskon);
+
+      // nomor WA alternatif (opsional)
+      const waAlt = readVal('whatsapp_alt');
+      const waFinal = to62(waAlt || readVal('whatsapp'));
 
       const payload = {
         action: 'create_order',
@@ -397,11 +513,12 @@
         quantity: 1,
         fast: !!fastMode?.checked,
         fast_fee: conf.fastFee || 0,
+        discount: diskon,
         total,
         player_id: readVal('player_id'),
         server_id: readVal('server_id') || undefined,
-        whatsapp: to62(readVal('whatsapp')),
-        customer_phone: to62(readVal('whatsapp')),
+        whatsapp: waFinal,
+        customer_phone: waFinal,
         note: readVal('note') || undefined,
         payment_method: 'qris',
         return_url: location.origin + '/thanks',
@@ -410,7 +527,7 @@
       };
       if (API_KEY) payload.api_key = API_KEY;
 
-      const btn = ev.submitter || qs('#btnKirim');
+      const btn = ev.submitter || qs('#btnBeli');
 
       await withSpinner(btn, 'Membuat pesanan…', async () => {
         const d1 = await postJSONAny(PUBLIC_API, payload);
@@ -516,6 +633,7 @@
 
   // ------------------------ BOOT ---------------------------
   async function boot(){
+    showNominalSkeleton();
     await loadPricesFromBackend(); // override PRICES dari backend kalau ada
 
     if (gameSel && window.PRICES) {
@@ -531,6 +649,7 @@
     }
 
     wireListeners();
+    setupConfirmationCard(); // pastikan card ada
 
     const paramGame = getParam('game');
     const lastGame  = localStorage.getItem('lastGame');
@@ -544,6 +663,8 @@
         renderNominals(initCode);
         renderFields(initCode);
         syncProductHeader(initCode);
+        setupConfirmationCard();
+        calcTotal();
         orderSection?.classList.remove('d-none');
       }
     } else {
