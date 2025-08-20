@@ -1,0 +1,10 @@
+/* Extracted from HTML <style> blocks */
+
+
+body{background:#0f172a;color:#e2e8f0} .muted{color:#94a3b8}
+.status-badge{padding:.15rem .5rem;border-radius:999px;font-size:.75rem}
+.status-PENDING{background:#fef3c7;color:#92400e}.status-WAITING_PROOF{background:#e5e7eb;color:#374151}
+.status-DONE{background:#dcfce7;color:#166534}.status-FAILED{background:#fee2e2;color:#991b1b}
+.card{background:#111827;border:1px solid #374151;border-radius:16px}
+input,button,select{border-radius:12px}
+.hidden{display:none}

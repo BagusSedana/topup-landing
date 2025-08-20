@@ -1,0 +1,26 @@
+/* Extracted from HTML <style> blocks */
+
+
+    :root{ --bg:#f5f7fb; --card:#fff; --muted:#6b7280; --line:#eef0f4; }
+    body{ background:var(--bg); }
+    .navbar{ background:#ffffffd9; backdrop-filter: blur(6px); }
+    .navbar-brand{ font-weight:700; letter-spacing:.2px }
+    .hero{ border-radius:16px; overflow:hidden; }
+    .section{ margin-top:28px; }
+    .section-title{ display:flex; align-items:center; gap:.5rem; margin-bottom:12px; font-weight:700; color:#1f2937; }
+    .sec-note{ color:var(--muted); font-size:.9rem }
+    .category-wrap{ background:var(--card); border:1px solid var(--line); border-radius:14px; }
+    .category-pill{ display:flex; flex-direction:column; align-items:center; gap:.5rem; padding:18px 0; transition:.15s ease; color:#111827; text-decoration:none }
+    .category-pill:hover{ transform: translateY(-2px) }
+    .card-game,.card-mini{ border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--card); transition:.15s ease; height:100%; }
+    .card-game:hover,.card-mini:hover{ transform:translateY(-2px); box-shadow:0 10px 26px rgba(0,0,0,.06) }
+    .card-game .thumb{ aspect-ratio:1/1; width:100%; object-fit:cover }
+    .foot{ color:var(--muted); font-size:.85rem }
+    .badge-soft{ background:#fff; border:1px solid var(--line); color:#0f172a }
+    .badge-dis{ background:#fee2e2; color:#b91c1c }
+    .badge-instant{ background:#e0ecff; color:#2563eb }
+    .chip{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--line); background:var(--card); padding:.5rem .8rem; border-radius:999px; margin-right:.5rem; margin-bottom:.5rem; }
+    .feature{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px }
+    footer{ background:#fff; border-top:1px solid var(--line) }
+    .link-muted{ color:var(--muted); text-decoration:none } .link-muted:hover{ color:#111827 }
+  
