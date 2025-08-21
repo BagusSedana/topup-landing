@@ -24,6 +24,3 @@
     footer{ background:#fff; border-top:1px solid var(--line) }
     .link-muted{ color:var(--muted); text-decoration:none } .link-muted:hover{ color:#111827 }
   
-
-/* Accent: make selection/active state coherent in blue */
-.badge.text-bg-primary{background-color: var(--bs-primary)!important;}
