@@ -3,6 +3,19 @@
   var grid = el('#catalog');
   var input = el('#search');
 
+  // read ?search= query and prefilter
+  var params = (function(){
+    var q = {};
+    var s = window.location.search.replace(/^\?/, '').split('&');
+    for (var i=0;i<s.length;i++){
+      if (!s[i]) continue;
+      var kv = s[i].split('=');
+      q[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1]||'');
+    }
+    return q;
+  })();
+
+
   var ITEMS = [
     { type:'Game', slug:'ml',   name:'Mobile Legends',          href:'/product.html?game=ml',    brand:'ml' },
     { type:'Game', slug:'ff',   name:'Free Fire',               href:'/product.html?game=ff',    brand:'ff' },
@@ -88,5 +101,6 @@
   }
 
   render(ITEMS);
+  if (params.search) { if (input) input.value = params.search; render(filter(params.search)); }
   if (input) { input.addEventListener('input', function(){ render(filter(input.value)); }); }
 })();

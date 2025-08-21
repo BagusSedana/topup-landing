@@ -110,11 +110,25 @@
     `).join('');
   }
 
-  function renderMiniGrid(arr, targetId){
+  
+  // map display name -> product slug (for deep link)
+  const SLUG = {
+    'DANA':'dana','GOPAY':'gopay','OVO':'ovo','SHOPEEPAY':'shopeepay','MAXIM':'maxim','GRABPAY':'grabpay',
+    'TELKOMSEL':'tsel','INDOSAT':'im3','INDOSAT IM3':'im3','XL AXIATA':'xl','AXIS':'axis','TRI':'tri','SMARTFREN':'smartfren',
+    'MOBILE LEGENDS':'ml','FREE FIRE':'ff','PUBG MOBILE':'pubg','CALL OF DUTY':'codm','CALL OF DUTY MOBILE':'codm',
+    'GENSHIN IMPACT':'gi','HONKAI IMPACT 3':'hi3','HONOR OF KINGS':'hok','HAGO':'hago','VALORANT':'valorant',
+    'STEAM WALLET':'steam','GOOGLE PLAY VOUCHER':'google','GOOGLE PLAY':'google','VIDIO VOUCHER':'vidio'
+  };
+  function hrefFor(name){
+    const key = String(name||'').trim().toUpperCase();
+    if (SLUG[key]) return '/product.html?game=' + SLUG[key];
+    return '/products.html?search=' + encodeURIComponent(name||'');
+  }
+function renderMiniGrid(arr, targetId){
     const el = ensureMount(targetId, 'row g-3');
     el.innerHTML = arr.map(x => `
       <div class="col-6 col-md-3 col-lg-2">
-        <a href="#" class="text-decoration-none">
+        <a href="${hrefFor(x.name)}" class="text-decoration-none">
           <div class="card-mini text-center p-3">
             <img src="${x.img}" alt="${x.name}" loading="lazy" style="width:54px;height:54px;object-fit:contain">
             <div class="mt-2 fw-semibold small text-dark">${x.name}</div>
@@ -128,7 +142,7 @@
   function renderChips(arr, targetId){
     const el = ensureMount(targetId, 'pb-1');
     el.innerHTML = arr.map(x => `
-      <a href="#" class="chip text-decoration-none">
+      <a href="${hrefFor(x.name)}" class="chip text-decoration-none">
         <img src="${x.img}" alt="${x.name}" style="width:24px;height:24px;object-fit:contain">
         <span class="fw-medium">${x.name}</span>
       </a>
