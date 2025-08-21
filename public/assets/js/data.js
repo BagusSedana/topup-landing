@@ -1,134 +1,123 @@
-// /assets/js/data.js
+// generated data.js
 window.GAMES = {
   ml: {
-    key: 'ml',
-    name: 'Mobile Legends',
-    popular: true,
-    fastFee: 2000,
-    fields: [
-      { id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$', help:'Gunakan angka tanpa tanda/pemisah.' },
-      { id:'serverId', label:'Server ID', placeholder:'contoh: 1234', type:'text', pattern:'^[0-9]{1,6}$', help:'4 digit di belakang tanda (.). Contoh: 12345678 (1234).' }
-    ],
-    howto: [
-      'Buka profil di game ➝ salin Player ID. Untuk ML: angka murni tanpa tanda.',
-      'Server ID adalah 4 digit di belakang tanda (.). Contoh 12345678 (1234).',
-      'Pilih nominal diamonds, isi WA yang aktif, lalu bayar via QRIS.'
-    ],
-    detailsHtml: `
-<div class="stack-16">
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h2 class="h5 mb-2">Top Up Mobile Legends (ML)</h2>
-    <p><em>Delivery:</em> Instan • <em>Provider:</em> Moonton</p>
-    <p>Beli Diamonds Mobile Legends lebih murah pakai kode promo, hemat hingga 39%. Top Up ML murah dan proses instan di TopUpGim, beli Weekly Diamond Pass hanya Rp26.900 dan top up 113 Diamonds hanya Rp30.600.</p>
-    <h3 class="h6 mt-3">Kenapa Top Up ML di TopUpGim.com?</h3>
-    <ul class="mb-0">
-      <li><b>Lebih Murah.</b> Hemat hingga 39% &amp; tanpa biaya admin.</li>
-      <li><b>Mudah &amp; Otomatis.</b> Tidak perlu kirim bukti pembayaran.</li>
-      <li><b>Proses Instan.</b> Pengiriman hanya hitungan detik.</li>
-    </ul>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Mobile Legends</h3>
-    <p>Mobile Legends (ML) adalah permainan MOBA populer. Dua tim 5v5 bertarung menghancurkan base lawan dengan koordinasi dan strategi.</p>
-    <ul class="mb-0">
-      <li><b>Heroes:</b> Tank, Fighter, Assassin, Mage, Marksman, Support.</li>
-      <li><b>Gameplay:</b> ~10–15 menit / match.</li>
-      <li><b>Map:</b> Tiga lane + turret.</li>
-      <li><b>Ranked:</b> Mode kompetitif untuk push rank.</li>
-      <li><b>Skins:</b> Kostum & efek visual.</li>
-    </ul>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Diamond Mobile Legends (ML)</h3>
-    <p>Diamond adalah mata uang premium untuk beli skins, heroes, bundles, emote, hingga Starlight Membership.</p>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Cara Top Up Diamond Mobile Legends Termurah</h3>
-    <ol class="mb-0">
-      <li>Buka halaman <b>Top Up Mobile Legends</b> di TopUpGim.</li>
-      <li>Masukkan <b>Player ID</b> dan <b>Server ID</b> (4 digit di belakang titik).</li>
-      <li>Pilih nominal diamond.</li>
-      <li>Pilih metode pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li>
-      <li>Lakukan pembayaran dan tunggu beberapa detik.</li>
-      <li>Diamond otomatis masuk ke akun.</li>
-    </ol>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Metode Pembayaran</h3>
-    <ul class="mb-0">
-      <li>Transfer Bank</li>
-      <li>E‑wallet (GoPay, OVO, DANA, LinkAja)</li>
-      <li>Kartu Kredit/Debit</li>
-      <li>Pulsa</li>
-      <li>Minimarket</li>
-      <li>QRIS</li>
-    </ul>
-  </div></section>
-
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h3 class="h6">Rekomendasi Top Up Game Lain</h3>
-    <p>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p>
-    <p class="mb-0">TopUpGim cepat, murah, praktis—langsung dari HP.</p>
-  </div></section>
-</div>
-`
-  },
+  key:'ml', name:"Mobile Legends", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' },{ id:'serverId', label:'Server ID', placeholder:'contoh: 1234', type:'text', pattern:'^[0-9]{1,6}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Mobile Legends</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Moonton</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>MOBA 5v5 dengan ratusan hero. Dua tim bertarung menghancurkan base lawan dengan koordinasi dan strategi.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Diamond Mobile Legends (ML)</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
   ff: {
-    key: 'ff',
-    name: 'Free Fire',
-    popular: true,
-    fastFee: 2000,
-    fields: [
-      { id:'playerId', label:'Player ID', placeholder:'contoh: 123456789', type:'text', pattern:'^[0-9]{4,}$' }
-    ],
-    howto: [
-      'Masukkan Player ID.',
-      'Pilih jumlah Diamonds.',
-      'Bayar via QRIS/e‑wallet—instan.'
-    ],
-    detailsHtml: `
-<div class="stack-16">
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
-  </div></section>
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h2 class="h5 mb-2">Top Up Free Fire (FF)</h2>
-    <p>Diamond FF murah, proses instan, tanpa biaya admin. Masukkan Player ID, pilih nominal, bayar via QRIS/e‑wallet—item langsung masuk.</p>
-  </div></section>
-</div>
-`
-  },
+  key:'ff', name:"Free Fire (FF)", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Free Fire (FF)</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Garena</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Battle royale cepat dengan banyak event & bundle skin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Diamond Free Fire (FF)</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
   pubg: {
-    key: 'pubg',
-    name: 'PUBG Mobile',
-    popular: true,
-    fastFee: 2000,
-    fields: [
-      { id:'playerId', label:'UID', placeholder:'contoh: 5123456789', type:'text', pattern:'^[0-9]{5,}$' }
-    ],
-    howto: [
-      'Masukkan UID PUBG.',
-      'Pilih jumlah UC.',
-      'Bayar via QRIS—saldo otomatis masuk.'
-    ],
-    detailsHtml: `
-<div class="stack-16">
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div>
-  </div></section>
-  <section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body">
-    <h2 class="h5 mb-2">Top Up PUBG Mobile</h2>
-    <p>Beli UC PUBG Mobile cepat & aman. Isi UID, pilih nominal UC, bayar, saldo otomatis terkirim.</p>
-  </div></section>
-</div>
-`
-  }
+  key:'pubg', name:"PUBG Mobile", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'UID', placeholder:'contoh: 5123456789', type:'text', pattern:'^[0-9]{5,}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up PUBG Mobile</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Tencent</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Battle royale realistis untuk push rank.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>UC (Unknown Cash)</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  codm: {
+  key:'codm', name:"Call of Duty: Mobile", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Call of Duty: Mobile</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Activision</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>FPS mobile dengan mode Multiplayer & Battle Royale.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>CP (Call of Duty Points)</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  hok: {
+  key:'hok', name:"Honor of Kings", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Honor of Kings</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Tencent</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>MOBA kompetitif dengan hero & mekanik mendalam.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Voucher HOK</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  gi: {
+  key:'gi', name:"Genshin Impact", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'UID', placeholder:'contoh: 800123456', type:'text', pattern:'^[0-9]{6,}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Genshin Impact</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> HoYoverse</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Open‑world RPG dengan karakter gacha.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Genesis Crystal & Blessing</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  hsr: {
+  key:'hsr', name:"Honkai: Star Rail", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'UID', placeholder:'contoh: 800123456', type:'text', pattern:'^[0-9]{6,}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Honkai: Star Rail</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> HoYoverse</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Turn‑based RPG dengan banner gacha.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Oneiric Shard & Express Pass</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  valorant: {
+  key:'valorant', name:"VALORANT (RP)", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Riot ID / Tag', placeholder:'contoh: nama#1234', type:'text' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up VALORANT (RP)</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Riot Games</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Tactical shooter 5v5 di PC.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Riot Points (Voucher)</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  roblox: {
+  key:'roblox', name:"Roblox (Robux)", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Roblox (Robux)</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Roblox</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Platform game & creator economy.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Robux</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  steam: {
+  key:'steam', name:"Steam Wallet", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Steam Wallet</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Valve</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Saldo toko Steam untuk beli game & item.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Steam Wallet Code</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  google: {
+  key:'google', name:"Google Play", popular:true, fastFee:2000,
+  fields: [{ id:'playerId', label:'Player ID', placeholder:'contoh: 12345678', type:'text', pattern:'^[0-9]{1,20}$' }],
+  howto: ['Buka profil/UID','Pilih nominal','Bayar via QRIS/e-wallet/bank','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Kirim cepat hitungan detik.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up Google Play</h2><p class='mb-1'><em>Delivery:</em> Instan • <em>Provider:</em> Google</p><p class='mb-0'><b>Hemat sampai 39%.</b> Promo rutin & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Kenapa Top Up di TopUpGim?</h3><ul class='mb-0 ps-3'><li><b>Lebih Murah</b> — diskon & tanpa biaya admin.</li><li><b>Mudah & Otomatis</b> — tanpa kirim bukti bayar.</li><li><b>Resmi & Aman</b> — pembayaran lokal & QRIS.</li></ul></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Tentang Game</h3><p class='mb-0'>Voucher untuk pembelian aplikasi & IAP.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Google Play Code</h3><p class='mb-0'>Mata uang premium untuk beli item eksklusif & akses fitur berbayar.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>ID</b> yang diminta.</li><li>Pilih nominal.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket/pulsa).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>Transfer Bank, E‑wallet (GoPay/OVO/DANA/LinkAja), Kartu Kredit/Debit, Pulsa, Minimarket, QRIS.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Rekomendasi Top Up Game Lain</h3><p class='mb-0'>Free Fire, PUBG Mobile, CODM, Honor of Kings, Genshin Impact, Hago, Valorant, Blood Strike, Honkai: Star Rail.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  tsel: {
+  key:'tsel', name:"Telkomsel", popular:true, fastFee:1000,
+  fields: [{ id:'phone', label:'Nomor HP', placeholder:'08xxxxxxxxxx', type:'tel', pattern:'^0[0-9]{9,13}$' }],
+  howto: ['Masukkan nomor HP','Pilih nominal','Bayar via QRIS/e-wallet/bank','Pulsa/paket masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo masuk realtime.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Isi Pulsa & Paket Data — Telkomsel</h2><p class='mb-0'>Nomor HP kamu langsung terisi. Harga transparan tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Isi</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor HP</b>.</li><li>Pilih nominal pulsa/paket.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, GoPay, OVO, DANA, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  im3: {
+  key:'im3', name:"Indosat IM3", popular:true, fastFee:1000,
+  fields: [{ id:'phone', label:'Nomor HP', placeholder:'08xxxxxxxxxx', type:'tel', pattern:'^0[0-9]{9,13}$' }],
+  howto: ['Masukkan nomor HP','Pilih nominal','Bayar via QRIS/e-wallet/bank','Pulsa/paket masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo masuk realtime.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Isi Pulsa & Paket Data — Indosat IM3</h2><p class='mb-0'>Nomor HP kamu langsung terisi. Harga transparan tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Isi</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor HP</b>.</li><li>Pilih nominal pulsa/paket.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, GoPay, OVO, DANA, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  xl: {
+  key:'xl', name:"XL Axiata", popular:true, fastFee:1000,
+  fields: [{ id:'phone', label:'Nomor HP', placeholder:'08xxxxxxxxxx', type:'tel', pattern:'^0[0-9]{9,13}$' }],
+  howto: ['Masukkan nomor HP','Pilih nominal','Bayar via QRIS/e-wallet/bank','Pulsa/paket masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo masuk realtime.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Isi Pulsa & Paket Data — XL Axiata</h2><p class='mb-0'>Nomor HP kamu langsung terisi. Harga transparan tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Isi</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor HP</b>.</li><li>Pilih nominal pulsa/paket.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, GoPay, OVO, DANA, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  axis: {
+  key:'axis', name:"AXIS", popular:true, fastFee:1000,
+  fields: [{ id:'phone', label:'Nomor HP', placeholder:'08xxxxxxxxxx', type:'tel', pattern:'^0[0-9]{9,13}$' }],
+  howto: ['Masukkan nomor HP','Pilih nominal','Bayar via QRIS/e-wallet/bank','Pulsa/paket masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo masuk realtime.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Isi Pulsa & Paket Data — AXIS</h2><p class='mb-0'>Nomor HP kamu langsung terisi. Harga transparan tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Isi</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor HP</b>.</li><li>Pilih nominal pulsa/paket.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, GoPay, OVO, DANA, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  tri: {
+  key:'tri', name:"Tri", popular:true, fastFee:1000,
+  fields: [{ id:'phone', label:'Nomor HP', placeholder:'08xxxxxxxxxx', type:'tel', pattern:'^0[0-9]{9,13}$' }],
+  howto: ['Masukkan nomor HP','Pilih nominal','Bayar via QRIS/e-wallet/bank','Pulsa/paket masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo masuk realtime.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Isi Pulsa & Paket Data — Tri</h2><p class='mb-0'>Nomor HP kamu langsung terisi. Harga transparan tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Isi</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor HP</b>.</li><li>Pilih nominal pulsa/paket.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, GoPay, OVO, DANA, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  smartfren: {
+  key:'smartfren', name:"SMARTFREN", popular:true, fastFee:1000,
+  fields: [{ id:'phone', label:'Nomor HP', placeholder:'08xxxxxxxxxx', type:'tel', pattern:'^0[0-9]{9,13}$' }],
+  howto: ['Masukkan nomor HP','Pilih nominal','Bayar via QRIS/e-wallet/bank','Pulsa/paket masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo masuk realtime.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Isi Pulsa & Paket Data — SMARTFREN</h2><p class='mb-0'>Nomor HP kamu langsung terisi. Harga transparan tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Isi</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor HP</b>.</li><li>Pilih nominal pulsa/paket.</li><li>Pilih pembayaran (QRIS/e‑wallet/bank/kartu/minimarket).</li><li>Bayar & tunggu beberapa detik.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, GoPay, OVO, DANA, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  gopay: {
+  key:'gopay', name:"GoPay", popular:true, fastFee:1000,
+  fields: [{ id:'account', label:'Nomor/ID Akun', placeholder:'contoh: 08xxxxxxxxxx', type:'text' }],
+  howto: ['Masukkan nomor/ID','Pilih nominal','Bayar & konfirmasi','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo e‑wallet masuk otomatis.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up GoPay</h2><p class='mb-0'>Praktis untuk pembayaran harian. Harga kompetitif & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor/ID</b> akun.</li><li>Pilih nominal.</li><li>Pilih pembayaran & konfirmasi.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  ovo: {
+  key:'ovo', name:"OVO", popular:true, fastFee:1000,
+  fields: [{ id:'account', label:'Nomor/ID Akun', placeholder:'contoh: 08xxxxxxxxxx', type:'text' }],
+  howto: ['Masukkan nomor/ID','Pilih nominal','Bayar & konfirmasi','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo e‑wallet masuk otomatis.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up OVO</h2><p class='mb-0'>Praktis untuk pembayaran harian. Harga kompetitif & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor/ID</b> akun.</li><li>Pilih nominal.</li><li>Pilih pembayaran & konfirmasi.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+},
+  dana: {
+  key:'dana', name:"DANA", popular:true, fastFee:1000,
+  fields: [{ id:'account', label:'Nomor/ID Akun', placeholder:'contoh: 08xxxxxxxxxx', type:'text' }],
+  howto: ['Masukkan nomor/ID','Pilih nominal','Bayar & konfirmasi','Saldo masuk otomatis'],
+  detailsHtml: `<div class="stack-16"><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><div class="alert alert-primary rounded-4 mb-0"><b>Proses Instan.</b> Saldo e‑wallet masuk otomatis.</div></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h2 class='h5 mb-2'>Top Up DANA</h2><p class='mb-0'>Praktis untuk pembayaran harian. Harga kompetitif & tanpa biaya admin.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Cara Top Up</h3><ol class='mb-0 ps-3'><li>Masukkan <b>Nomor/ID</b> akun.</li><li>Pilih nominal.</li><li>Pilih pembayaran & konfirmasi.</li></ol></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><h3 class='h6 mb-2'>Metode Pembayaran</h3><p class='mb-0'>QRIS, Transfer Bank, Kartu, Minimarket.</p></div></section><section class="card border-0 shadow-sm rounded-4 content-section"><div class="card-body"><p class='mb-0'>TopUpGim cepat, murah, praktis—langsung dari HP.</p></div></section></div>`
+}
 };

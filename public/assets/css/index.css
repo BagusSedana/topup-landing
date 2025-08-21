@@ -24,3 +24,20 @@
     footer{ background:#fff; border-top:1px solid var(--line) }
     .link-muted{ color:var(--muted); text-decoration:none } .link-muted:hover{ color:#111827 }
   
+
+/* Fallback logo block for catalog cards */
+.logo-fallback{
+  border-radius: .75rem;
+  background: #eef2ff;
+  color: #1f2937;
+}
+.logo-fallback span{ font-size: 1.25rem; }
+.logo-fallback.tsel{ background:#fee2e2; color:#991b1b; }
+.logo-fallback.im3{ background:#fef3c7; color:#92400e; }
+.logo-fallback.xl{ background:#dbeafe; color:#1e40af; }
+.logo-fallback.axis{ background:#ede9fe; color:#5b21b6; }
+.logo-fallback.tri{ background:#f1f5f9; color:#334155; }
+.logo-fallback.smartfren{ background:#ffe4e6; color:#9f1239; }
+.logo-fallback.gopay{ background:#ccfbf1; color:#115e59; }
+.logo-fallback.ovo{ background:#ede9fe; color:#5b21b6; }
+.logo-fallback.dana{ background:#dbeafe; color:#1e3a8a; }
