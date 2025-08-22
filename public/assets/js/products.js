@@ -24,7 +24,7 @@
     { type:'Game', slug:'hok',  name:'Honor of Kings',          href:'/product.html?game=hok',   brand:'hok' },
     { type:'Game', slug:'gi',   name:'Genshin Impact',          href:'/product.html?game=gi',    brand:'gi' },
     { type:'Game', slug:'hsr',  name:'Honkai: Star Rail',       href:'/product.html?game=hsr',   brand:'hsr' },
-    { type:'Game', slug:'valorant', name:'VALORANT (RP)',       href:'/product.html?game=valorant', brand:'valorant' },
+    { type:'Game', slug:'valorant', name:'VALORANT (VP)',       href:'/product.html?game=valorant', brand:'valorant' },
     { type:'Game', slug:'roblox', name:'Roblox (Robux)',        href:'/product.html?game=roblox', brand:'roblox' },
     { type:'Voucher', slug:'steam',  name:'Steam Wallet',       href:'/product.html?game=steam',  brand:'steam' },
     { type:'Voucher', slug:'google', name:'Google Play',        href:'/product.html?game=google', brand:'google' },
