@@ -32,7 +32,6 @@
     { type:'E-wallet', slug:'ovo',   name:'OVO',                 href:'/product.html?game=ovo',   brand:'ovo' },
     { type:'E-wallet', slug:'dana',  name:'DANA',                href:'/product.html?game=dana',  brand:'dana' },
     { type:'E-wallet', slug:'shopeePay',  name:'ShopeePay',     href:'/product.html?game=shopeePay',  brand:'shopeepay' },
-    { type:'E-wallet', slug:'goPay',  name:'GoPay',             href:'/product.html?game=gopay',  brand:'gopay' },
     { type:'E-wallet', slug:'LinkAja',  name:'LinkAja',             href:'/product.html?game=linkaja',  brand:'linkaja' },
     { type:'Pulsa', slug:'tsel',       name:'Telkomsel',        href:'/product.html?game=tsel',      brand:'tsel' },
     { type:'Pulsa', slug:'im3',        name:'Indosat IM3',      href:'/product.html?game=im3',       brand:'im3' },
