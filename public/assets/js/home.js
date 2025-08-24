@@ -22,9 +22,9 @@
     { name:'DANA', img:'https://i.imgur.com/6wABv0k.png' },
     { name:'ZEPETO', img:'https://i.imgur.com/fC1m5w1.png' },
     { name:'Point Blank', img:'https://i.imgur.com/7gqQe9i.png' },
-    { name:'Genshin Impact', img:'https://i.imgur.com/3fM4y7j.png' },
-    { name:'Call of Duty', img:'https://i.imgur.com/2GjKxQ3.png' },
-    { name:'Valorant', img:'https://i.imgur.com/0L9cR2P.png' },
+    { name:'Genshin Impact', img:'/assets/img/genshin.jpg' },
+    { name:'Call of Duty', img:'/assets/img/codm.jpg' },
+    { name:'Valorant', img:'/assets/img/valorant.jpg' },
     { name:'Bigo Live', img:'https://i.imgur.com/8Z0L1r2.png' },
     { name:'Garena Undawn', img:'https://i.imgur.com/7sp5jww.png' }
   ];
@@ -53,11 +53,11 @@
     { name:'Smartfren', img:'https://i.imgur.com/5lQeU6D.png' }
   ];
   const GAMECAT = [
-    { name:'Call of Duty Mobile', img:'https://i.imgur.com/2GjKxQ3.png' },
-    { name:'Genshin Impact',      img:'https://i.imgur.com/3fM4y7j.png' },
-    { name:'HAGO',                img:'https://i.imgur.com/gAKp1lH.png' },
+    { name:'Call of Duty Mobile', img:'/assets/img/codm.jpg' },
+    { name:'Genshin Impact',      img:'/assets/img/genshin.jpg' },
+    { name:'HAGO',                img:'/assets/img/hago.jpg' },
     { name:'Honkai Impact 3',     img:'https://i.imgur.com/Tb91ZJH.png' },
-    { name:'Free Fire',           img:'https://i.imgur.com/2fVtQcx.png' },
+    { name:'Free Fire',           img:'/assets/img/ff.jpg' },
     { name:'Nikke',               img:'https://i.imgur.com/t0oV0nO.png' },
     { name:'LoL: Wild Rift',      img:'https://i.imgur.com/0b0gqgM.png' }
   ];
@@ -72,11 +72,11 @@
   ];
   const FALLBACK_GAMES = [
     { slug:'ml',    name:'Mobile Legends', cover:'/assets/img/ml.jpg', sold:'Terjual 10rb+', dis:'-15%', instan:true },
-    { slug:'mcg',   name:'Magic Chess Go', cover:'https://cdn.topupgim.com/product-tiles/7c2d9f47-9030-4b98-b0e7-4c741c060935.png', sold:'Terjual 6rb+',  dis:'-15%', instan:true },
-    { slug:'ff',    name:'Free Fire',      cover:'https://cdn.topupgim.com/product-tiles/1d2a30ea-987b-452c-a658-8fae63176cc6.png', sold:'Terjual 10rb+', dis:'-20%', instan:true },
-    { slug:'hok',   name:'Honor of Kings', cover:'https://cdn.topupgim.com/product-tiles/18baee53-a677-48aa-af20-63a8326d773b.jpg', sold:'Terjual 10rb+', dis:'-20%', instan:true },
-    { slug:'hago',  name:'HAGO',           cover:'https://cdn.topupgim.com/product-tiles/4c6e19a1-1aaa-4bb4-8f3d-c321a31a250e.png', sold:'Terjual 10rb+', dis:'-15%', instan:true },
-    { slug:'pubgm', name:'PUBGM Global',   cover:'https://cdn.topupgim.com/product-tiles/7c8630ec-8447-45f0-85b6-5ae6a860460d.png', sold:'Terjual 10rb+', dis:'-10%', instan:true }
+    { slug:'mcg',   name:'Magic Chess Go', cover:'/assets/img/magic chess.jpg', sold:'Terjual 6rb+',  dis:'-15%', instan:true },
+    { slug:'ff',    name:'Free Fire',      cover:'/assets/img/ff.jpg', sold:'Terjual 10rb+', dis:'-20%', instan:true },
+    { slug:'hok',   name:'Honor of Kings', cover:'/assets/img/ml.jpg', sold:'Terjual 10rb+', dis:'-20%', instan:true },
+    { slug:'hago',  name:'HAGO',           cover:'/assets/img/hago.jpg', sold:'Terjual 10rb+', dis:'-15%', instan:true },
+    { slug:'pubgm', name:'PUBGM Global',   cover:'/assets/img/pubgm.jpg', sold:'Terjual 10rb+', dis:'-10%', instan:true }
   ];
 
   function renderPopular(){
