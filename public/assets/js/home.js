@@ -71,7 +71,7 @@
     { name:'Likee',               img:'https://i.imgur.com/8VwJ0jK.png' }
   ];
   const FALLBACK_GAMES = [
-    { slug:'ml',    name:'Mobile Legends', cover:'/img/ml.jpg', sold:'Terjual 10rb+', dis:'-15%', instan:true },
+    { slug:'ml',    name:'Mobile Legends', cover:'/assets/img/ml.jpg', sold:'Terjual 10rb+', dis:'-15%', instan:true },
     { slug:'mcg',   name:'Magic Chess Go', cover:'https://cdn.topupgim.com/product-tiles/7c2d9f47-9030-4b98-b0e7-4c741c060935.png', sold:'Terjual 6rb+',  dis:'-15%', instan:true },
     { slug:'ff',    name:'Free Fire',      cover:'https://cdn.topupgim.com/product-tiles/1d2a30ea-987b-452c-a658-8fae63176cc6.png', sold:'Terjual 10rb+', dis:'-20%', instan:true },
     { slug:'hok',   name:'Honor of Kings', cover:'https://cdn.topupgim.com/product-tiles/18baee53-a677-48aa-af20-63a8326d773b.jpg', sold:'Terjual 10rb+', dis:'-20%', instan:true },
