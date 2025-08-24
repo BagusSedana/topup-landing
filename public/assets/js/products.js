@@ -26,19 +26,19 @@
     { type:'Game', slug:'hsr',  name:'Honkai: Star Rail',       href:'/product.html?game=hsr',   brand:'hsr' },
     { type:'Game', slug:'valorant', name:'VALORANT (VP)',       href:'/product.html?game=valorant', brand:'valorant' },
     { type:'Game', slug:'roblox', name:'Roblox (Robux)',        href:'/product.html?game=roblox', brand:'roblox' },
-    { type:'Voucher', slug:'steam',  name:'Steam Wallet Voucher',       href:'/product.html?game=steam',  brand:'steam' },
-    { type:'Voucher', slug:'google', name:'Google Play Voucher',        href:'/product.html?game=google', brand:'google' },
-    { type:'E-wallet', slug:'gopay', name:'GoPay',               href:'/product.html?game=gopay', brand:'gopay' },
-    { type:'E-wallet', slug:'ovo',   name:'OVO',                 href:'/product.html?game=ovo',   brand:'ovo' },
-    { type:'E-wallet', slug:'dana',  name:'DANA',                href:'/product.html?game=dana',  brand:'dana' },
-    { type:'E-wallet', slug:'shopeePay',  name:'ShopeePay',     href:'/product.html?game=shopeePay',  brand:'shopeepay' },
-    { type:'E-wallet', slug:'LinkAja',  name:'LinkAja',             href:'/product.html?game=linkaja',  brand:'linkaja' },
-    { type:'Pulsa', slug:'tsel',       name:'Telkomsel',        href:'/product.html?game=tsel',      brand:'tsel' },
-    { type:'Pulsa', slug:'im3',        name:'Indosat IM3',      href:'/product.html?game=im3',       brand:'im3' },
-    { type:'Pulsa', slug:'xl',         name:'XL Axiata',        href:'/product.html?game=xl',        brand:'xl' },
-    { type:'Pulsa', slug:'axis',       name:'AXIS',             href:'/product.html?game=axis',      brand:'axis' },
-    { type:'Pulsa', slug:'tri',        name:'Tri',              href:'/product.html?game=tri',       brand:'tri' },
-    { type:'Pulsa', slug:'smartfren',  name:'SMARTFREN',        href:'/product.html?game=smartfren', brand:'smartfren' }
+    { type:'Voucher', slug:'steam',  name:'Steam Wallet Voucher',       href:'/product.html?voucher=steam',  brand:'steam' },
+    { type:'Voucher', slug:'google', name:'Google Play Voucher',        href:'/product.html?voucher=google', brand:'google' },
+    { type:'E-wallet', slug:'gopay', name:'GoPay',               href:'/product.html?ewallet=gopay', brand:'gopay' },
+    { type:'E-wallet', slug:'ovo',   name:'OVO',                 href:'/product.html?ewallet=ovo',   brand:'ovo' },
+    { type:'E-wallet', slug:'dana',  name:'DANA',                href:'/product.html?ewallet=dana',  brand:'dana' },
+    { type:'E-wallet', slug:'shopeePay',  name:'ShopeePay',     href:'/product.html?ewallet=shopeePay',  brand:'shopeepay' },
+    { type:'E-wallet', slug:'LinkAja',  name:'LinkAja',             href:'/product.html?ewallet=linkaja',  brand:'linkaja' },
+    { type:'Pulsa', slug:'tsel',       name:'Telkomsel',        href:'/product.html?pulsa=tsel',      brand:'tsel' },
+    { type:'Pulsa', slug:'im3',        name:'Indosat IM3',      href:'/product.html?pulsa=im3',       brand:'im3' },
+    { type:'Pulsa', slug:'xl',         name:'XL Axiata',        href:'/product.html?pulsa=xl',        brand:'xl' },
+    { type:'Pulsa', slug:'axis',       name:'AXIS',             href:'/product.html?pulsa=axis',      brand:'axis' },
+    { type:'Pulsa', slug:'tri',        name:'Tri',              href:'/product.html?pulsa=tri',       brand:'tri' },
+    { type:'Pulsa', slug:'smartfren',  name:'SMARTFREN',        href:'/product.html?pulsa=smartfren', brand:'smartfren' }
   ];
 
   function logoFallback(name, brand){
