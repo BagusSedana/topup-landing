@@ -117,12 +117,22 @@
   // ===== Dynamic fields
   const FORM_FIELDS = {
     ML: [
-      { name:'player_id', label:'Player ID',  placeholder:'contoh: 12345678', required:true,  pattern:'\\d{4,}' },
-      { name:'server_id', label:'Server ID (opsional)', placeholder:'contoh: 1234', required:false, pattern:'\\d{1,6}' }
+      { name:'player_id', label:'User ID',  placeholder:'contoh: Masukan User ID', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID', placeholder:'contoh: Masukan Server ID', required:false, pattern:'\\d{1,6}' }
     ],
-    FF:   [{ name:'player_id', label:'Player ID', placeholder:'contoh: 123456789', required:true, pattern:'\\d{4,}' }],
-    PUBG: [{ name:'player_id', label:'UID',       placeholder:'contoh: 5123456789', required:true, pattern:'\\d{5,}'}],
-    DEFAULT: [{ name:'player_id', label:'Player ID', placeholder:'ID/UID akun', required:true }]
+    MCG: [
+      { name:'player_id', label:'User ID',  placeholder:'contoh: Masukan User ID', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID', placeholder:'contoh: Masukan Server', required:false, pattern:'\\d{1,6}' }
+    ],
+    FF:   [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{4,}' }],
+    HOK:   [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{4,}' }],
+    PUBG: [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{5,}'}],
+    CODM: [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{5,}'}],
+    GI: [
+      { name:'player_id', label:'User ID',  placeholder:'contoh: Masukan User ID', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID', placeholder:'contoh: Masukan Server ID ( ASIA/AMERIKA/EUROPE/TW/HK/MO', required:false, pattern:'\\d{1,6}' }
+    ],
+    DEFAULT: [{ name:'player_id', label:'User ID', placeholder:'Masukan User ID', required:true }]
   };
 
   function renderFields(code){
