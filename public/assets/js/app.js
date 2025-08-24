@@ -117,21 +117,23 @@
   // ===== Dynamic fields
   const FORM_FIELDS = {
     ML: [
-      { name:'player_id', label:'User ID',  placeholder:'contoh: Masukan User ID', required:true,  pattern:'\\d{4,}' },
-      { name:'server_id', label:'Server ID', placeholder:'contoh: Masukan Server ID', required:false, pattern:'\\d{1,6}' }
+      { name:'player_id', label:'User ID',  placeholder:'Masukan User ID', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID', placeholder:'Masukan Server ID', required:false, pattern:'\\d{1,6}' }
     ],
     MCG: [
-      { name:'player_id', label:'User ID',  placeholder:'contoh: Masukan User ID', required:true,  pattern:'\\d{4,}' },
-      { name:'server_id', label:'Server ID', placeholder:'contoh: Masukan Server', required:false, pattern:'\\d{1,6}' }
+      { name:'player_id', label:'User ID',  placeholder:'Masukan User ID', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID', placeholder:'Masukan Server', required:false, pattern:'\\d{1,6}' }
     ],
-    FF:   [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{4,}' }],
-    HOK:   [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{4,}' }],
-    PUBG: [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{5,}'}],
-    CODM: [{ name:'player_id', label:'User ID', placeholder:'contoh: Masukan User ID', required:true, pattern:'\\d{5,}'}],
+    FF:   [{ name:'player_id', label:'ID Player', placeholder:'Masukan ID Player', required:true, pattern:'\\d{4,}' }],
+    HOK:   [{ name:'player_id', label:'User ID', placeholder:'Masukan User ID', required:true, pattern:'\\d{4,}' }],
+    HAGO:   [{ name:'player_id', label:'User ID', placeholder:'Masukan User ID', required:true, pattern:'\\d{4,}' }],
+    PUBG: [{ name:'player_id', label:'User ID', placeholder:'Masukan User ID', required:true, pattern:'\\d{5,}'}],
+    CODM: [{ name:'player_id', label:'User ID', placeholder:'Masukan User ID', required:true, pattern:'\\d{5,}'}],
     GI: [
-      { name:'player_id', label:'User ID',  placeholder:'contoh: Masukan User ID', required:true,  pattern:'\\d{4,}' },
-      { name:'server_id', label:'Server ID', placeholder:'contoh: Masukan Server ID ( ASIA/AMERIKA/EUROPE/TW/HK/MO', required:false, pattern:'\\d{1,6}' }
+      { name:'player_id', label:'User ID',  placeholder:'Masukan User ID', required:true,  pattern:'\\d{4,}' },
+      { name:'server_id', label:'Server ID', placeholder:'Server (ASIA/AMERIKA/EUROPE/TW/HK/MO)', required:false, pattern:'\\d{1,6}' }
     ],
+    HSR: [{ name:'player_id', label:'ID Player ', placeholder:'Masukan ID Player', required:true, pattern:'\\d{5,}'}],
     DEFAULT: [{ name:'player_id', label:'User ID', placeholder:'Masukan User ID', required:true }]
   };
 
