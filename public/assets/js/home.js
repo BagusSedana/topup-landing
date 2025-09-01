@@ -25,7 +25,7 @@
     { name:'Genshin Impact', img:'/assets/img/genshin.jpg' },
     { name:'Call of Duty', img:'/assets/img/codm.jpg' },
     { name:'Valorant', img:'/assets/img/valorant.jpg' },
-    { name:'Bigo Live', img:'https://i.imgur.com/8Z0L1r2.png' },
+    { name:'Bigo Live', img:'/assets/img/hrs.jpg' },
     { name:'Garena Undawn', img:'https://i.imgur.com/7sp5jww.png' }
   ];
   const DAILY = [
